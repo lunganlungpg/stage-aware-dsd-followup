@@ -2,119 +2,399 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Stage-aware follow-up designs</title>
-<meta name="description" content="Interactive preprint: stage-aware follow-up designs for definitive screening experiments — exact criteria, rank completion and pooled-criterion bias.">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Interactive preprint: stage-aware follow-up designs for definitive screening experiments, with agricultural examples (two-season field trials, tissue-culture batches, greenhouse batches).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap">
+<script>
+window.MathJax={tex:{inlineMath:[["$","$"]],displayMath:[["$$","$$"]],processEscapes:true},
+  svg:{fontCache:"global"},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code","svg"]}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
 <style>
+/* Layout: full-bleed masthead on a faint field-plot grid; below it a sticky contents rail (wide screens) beside a ~68ch reading column.
+   Interactive figures sit in raised panels and may break out of the column. Two seasons are a colour system used everywhere:
+   Stage 1 = first season (monsoon blue), Stage 2 = follow-up season (wheat amber). Leaf green is the single accent. */
 :root{
-  --bg:#fbfaf7; --paper:#ffffff; --ink:#1d1d1f; --muted:#5f6368; --rule:#e3e0d8;
-  --accent:#1f5fa8; --accent-soft:#e7eef8; --warn:#a8461f; --good:#1f7a4d;
-  --s1:#8a8a8a; --heat:31,95,168; --code:#f4f2ec;
+  --bg:#f3f5f1; --paper:#ffffff; --ink:#17201a; --muted:#56635a; --rule:#d8dfd6;
+  --band:#e9efe7; --gridline:rgba(43,116,72,.10); --thead:#f0f4ee; --prop-bg:#eef3ec;
+  --accent:#2b7448; --accent-ink:#ffffff; --accent-soft:#e1eee4;
+  --s1:#2a6a92; --s1-soft:#e2edf4; --s2:#9c6315; --s2-soft:#f7eddb;
+  --warn:#b3452a; --good:#2b7448; --code:#ecf0ea; --heat:43,116,72;
+  --shadow:0 1px 2px rgba(23,32,26,.05),0 10px 28px -14px rgba(23,52,32,.22);
+  --f-display:"Source Serif 4","Iowan Old Style",Cambria,Georgia,serif;
+  --f-body:"Source Serif 4","Iowan Old Style",Cambria,Georgia,serif;
+  --f-ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#141517; --paper:#1b1c1f; --ink:#e8e6e1; --muted:#a3a19b; --rule:#33343a;
-    --accent:#7fb0ec; --accent-soft:#1f2a38; --warn:#f0936b; --good:#6fcf9b;
-    --s1:#9a9a9a; --heat:127,176,236; --code:#24262b;
+    --bg:#0f1410; --paper:#161d18; --ink:#e2e9e3; --muted:#9cafa2; --rule:#2a362e;
+    --band:#131b15; --gridline:rgba(108,200,147,.07); --thead:#1b241e; --prop-bg:#1a231d;
+    --accent:#6cc893; --accent-ink:#0f1410; --accent-soft:#1a2d21;
+    --s1:#73b4dd; --s1-soft:#15232d; --s2:#e3b25a; --s2-soft:#2a2316;
+    --warn:#f08b6b; --good:#6cc893; --code:#1c251f; --heat:108,200,147;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 30px -16px rgba(0,0,0,.6); color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#141517; --paper:#1b1c1f; --ink:#e8e6e1; --muted:#a3a19b; --rule:#33343a;
-  --accent:#7fb0ec; --accent-soft:#1f2a38; --warn:#f0936b; --good:#6fcf9b;
-  --s1:#9a9a9a; --heat:127,176,236; --code:#24262b;
+  --bg:#0f1410; --paper:#161d18; --ink:#e2e9e3; --muted:#9cafa2; --rule:#2a362e;
+  --band:#131b15; --gridline:rgba(108,200,147,.07); --thead:#1b241e; --prop-bg:#1a231d;
+  --accent:#6cc893; --accent-ink:#0f1410; --accent-soft:#1a2d21;
+  --s1:#73b4dd; --s1-soft:#15232d; --s2:#e3b25a; --s2-soft:#2a2316;
+  --warn:#f08b6b; --good:#6cc893; --code:#1c251f; --heat:108,200,147;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 30px -16px rgba(0,0,0,.6); color-scheme:dark;
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 Charter,"Bitstream Charter","Sitka Text",Cambria,Georgia,serif}
-.wrap{max-width:780px;margin:0 auto;padding:0 16px}
-header.top{border-bottom:1px solid var(--rule);background:var(--paper)}
-.bar{display:flex;gap:12px;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto;padding:10px 16px;font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
-.bar a{color:var(--accent);text-decoration:none;margin-left:14px}
-.badge{display:inline-block;font:600 12px/1 system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:5px 8px;border:1px solid var(--accent);color:var(--accent);border-radius:3px}
-h1{font-size:1.85rem;line-height:1.25;margin:2.2rem 0 1rem;font-weight:700}
-h2{font-size:1.3rem;margin:2.4rem 0 .6rem;padding-top:.4rem;border-top:1px solid var(--rule)}
-h3{font-size:1.07rem;margin:1.6rem 0 .4rem}
-.authors{font-size:1.05rem;margin:0}
-.affil{color:var(--muted);font-size:.92rem;margin:.2rem 0 1.4rem}
-.abstract{background:var(--paper);border:1px solid var(--rule);border-left:3px solid var(--accent);padding:14px 18px;margin:1.2rem 0}
-.abstract b{font-variant:small-caps;letter-spacing:.03em}
-.kw{font-size:.92rem;color:var(--muted)}
-a{color:var(--accent)}
-.prop{background:var(--paper);border:1px solid var(--rule);padding:10px 16px;margin:1rem 0}
-.prop>b:first-child{font-style:normal}
-.prop i{font-style:italic}
-.katex-display{overflow-x:auto;overflow-y:hidden;padding:2px 0}
-ol.contrib li{margin:.25rem 0}
-table.t{border-collapse:collapse;width:100%;font:13.5px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;margin:.6rem 0 1.2rem}
-table.t th,table.t td{padding:5px 7px;text-align:right;border-bottom:1px solid var(--rule);white-space:nowrap}
-table.t th{font-weight:600;border-bottom:1.5px solid var(--ink);vertical-align:bottom}
-table.t td:first-child,table.t th:first-child{text-align:left}
-.tscroll{overflow-x:auto}
-.cap{font-size:.92rem;color:var(--muted);margin:.3rem 0 .2rem}
-.cap b{color:var(--ink)}
-details{background:var(--paper);border:1px solid var(--rule);padding:8px 14px;margin:.7rem 0}
-details summary{cursor:pointer;font-weight:600}
-.refs p{font-size:.92rem;padding-left:1.4em;text-indent:-1.4em;margin:.35rem 0}
-pre{background:var(--code);padding:12px;overflow-x:auto;font:13px/1.45 ui-monospace,Consolas,monospace;border-radius:4px}
-code{font:.9em ui-monospace,Consolas,monospace;background:var(--code);padding:1px 4px;border-radius:3px}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:72px;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17.5px/1.7 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+a{color:var(--accent);text-underline-offset:2px;text-decoration-thickness:1px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+.bleed{margin-left:calc(-1 * max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)))}
+.bleed-in{max-width:1012px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 
-/* widgets */
-.widget{background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:14px;margin:1.4rem -8px;font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
-@media(min-width:900px){.widget.wide{margin-left:-120px;margin-right:-120px}}
-.widget h4{margin:0 0 .3rem;font-size:15px}
-.widget .sub{color:var(--muted);margin:0 0 .8rem}
-.ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:.4rem 0}
+/* top bar */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--paper);border-bottom:1px solid var(--rule)}
+.bar{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;justify-content:space-between;padding-block:10px;font:14px/1.4 var(--f-ui)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;color:var(--ink);text-decoration:none}
+.brand svg{width:22px;height:22px;flex:none}
+.brand small{font-weight:400;color:var(--muted)}
+.bar nav{display:flex;flex-wrap:wrap;gap:4px 18px;align-items:center}
+.bar nav a{text-decoration:none;color:var(--muted)}
+.bar nav a:hover{color:var(--accent)}
+@media(max-width:760px){.bar nav a.opt{display:none}}
+.tog{display:inline-flex;align-items:center;gap:6px;color:var(--muted);cursor:pointer}
+.tog input{accent-color:var(--accent)}
+.iconbtn{background:transparent;border:1px solid var(--rule);border-radius:999px;padding:3px 10px;color:var(--ink)}
+.progress{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--accent);transform-origin:0 50%;transform:scaleX(0)}
+
+/* masthead */
+.mast{background-color:var(--band);border-bottom:1px solid var(--rule);
+  background-image:linear-gradient(var(--gridline) 1px,transparent 1px),linear-gradient(90deg,var(--gridline) 1px,transparent 1px);
+  background-size:56px 40px;background-position:-1px -1px}
+.mast .bleed-in{padding-block:44px 34px}
+.kicker{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 18px;font:600 11.5px/1 var(--f-ui);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.chip{display:inline-block;padding:5px 9px;border-radius:999px;background:var(--paper);border:1px solid var(--rule);color:var(--ink)}
+.chip.acc{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+h1{font:600 clamp(1.9rem,4.6vw,2.85rem)/1.12 var(--f-display);letter-spacing:-.015em;margin:0;max-width:24ch;text-wrap:balance}
+.subtitle{font:400 clamp(1.05rem,2.3vw,1.3rem)/1.4 var(--f-ui);color:var(--muted);margin:.7rem 0 1.6rem;max-width:44ch;text-wrap:balance}
+.byline{display:flex;flex-wrap:wrap;gap:6px 28px;align-items:baseline;font:500 1rem/1.5 var(--f-ui);margin:0}
+.byline span sup{color:var(--accent);font-weight:600}
+.affil{color:var(--muted);font:14px/1.5 var(--f-ui);margin:.3rem 0 0;max-width:70ch}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px 24px;margin:1.6rem 0 0;padding:1rem 0 0;border-top:1px solid var(--rule);font:13px/1.4 var(--f-ui)}
+.meta div{min-width:0}
+.meta dt{color:var(--muted);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.meta dd{margin:0;color:var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:1.6rem 0 0}
+.stat{background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;font:13.5px/1.45 var(--f-ui);color:var(--muted)}
+.stat b{display:block;font:600 1.9rem/1.1 var(--f-ui);color:var(--accent);letter-spacing:-.01em;margin-bottom:6px;font-variant-numeric:tabular-nums}
+.stat.s1c b{color:var(--s1)} .stat.s2c b{color:var(--s2)}
+
+/* page grid with contents rail */
+.page{max-width:1012px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr)}
+.toc{display:none}
+main{min-width:0;width:100%;max-width:740px;margin:0 auto;padding-block:8px 0}
+@media(min-width:1180px){
+  .page{grid-template-columns:200px minmax(0,740px);gap:64px;max-width:1004px}
+  .toc{display:block;position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);align-self:start;max-height:calc(100vh - 96px);overflow:auto;padding-block:2.6rem 1rem;font:13px/1.35 var(--f-ui)}
+  main{margin:0}
+}
+.toc p{font:600 11px/1 var(--f-ui);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 10px 14px}
+.toc a{display:block;padding:5px 0 5px 14px;border-left:2px solid var(--rule);color:var(--muted);text-decoration:none}
+.toc a:hover{color:var(--ink)}
+.toc a.on{border-left-color:var(--accent);color:var(--ink);font-weight:500}
+
+/* headings and running text */
+h2,h3,h4{font-family:var(--f-ui);text-wrap:balance}
+h2{font-size:1.42rem;line-height:1.3;font-weight:600;letter-spacing:-.01em;margin:3.2rem 0 .8rem}
+h2 .num{display:inline-block;min-width:1.7em;color:var(--accent);font-variant-numeric:tabular-nums}
+h3{font-size:1.08rem;margin:1.9rem 0 .45rem;font-weight:600}
+main>p,main>ol,main>ul{max-width:68ch}
+.eyebrow{font:600 11.5px/1 var(--f-ui);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 .55rem}
+.kw{font:13.5px/1.6 var(--f-ui);color:var(--muted);margin:1rem 0 0}
+.kw b{color:var(--ink);font-weight:600}
+
+/* summary tabs */
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin:2.2rem 0 0;border-bottom:1px solid var(--rule)}
+.tabs button{font:500 14px/1 var(--f-ui);background:none;border:none;border-bottom:2px solid transparent;border-radius:0;padding:10px 12px;margin-bottom:-1px;color:var(--muted);cursor:pointer}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tabs button:hover{color:var(--ink)}
+.tabpanel{padding:18px 2px 4px}
+.tabpanel p,.tabpanel ul{max-width:68ch}
+.tabpanel p{margin:.2rem 0 .7rem}
+.tabpanel ul{margin:.2rem 0;padding-left:1.2em}
+.tabpanel li{margin:.35rem 0}
+#pan-abs p:first-child::first-letter{font:600 3.1em/0.9 var(--f-display);float:left;margin:.06em .1em 0 0;color:var(--accent)}
+
+/* field notes */
+.field{background:var(--s2-soft);border-radius:8px;padding:14px 18px;margin:1.2rem 0;font-size:.95rem;line-height:1.62}
+.field>.eyebrow{color:var(--s2);display:flex;align-items:center;gap:7px}
+.field>.eyebrow::before{content:"";width:15px;height:15px;flex:none;background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 14.5C1.5 6.8 6.6 1.5 14.5 1.5c0 7.9-5.3 13-13 13zm1.6-1.6c2.6-2.9 5.2-5.4 8.3-8.1-3.6 2.1-6.2 4.7-8.3 8.1z'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 14.5C1.5 6.8 6.6 1.5 14.5 1.5c0 7.9-5.3 13-13 13zm1.6-1.6c2.6-2.9 5.2-5.4 8.3-8.1-3.6 2.1-6.2 4.7-8.3 8.1z'/%3E%3C/svg%3E") center/contain no-repeat}
+.field p{margin:.3rem 0}
+body.nofield .field{display:none}
+
+/* propositions and maths */
+.prop{background:var(--prop-bg);border-radius:6px;padding:14px 20px 12px;margin:1.3rem 0}
+.prop>b:first-child{display:block;font:600 11.5px/1 var(--f-ui);letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin:2px 0 8px}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:4px 0;max-width:100%;margin:.9em 0!important}
+mjx-container{color:inherit}
+ol.contrib{padding-left:1.6em}
+ol.contrib li,ol.steps li{margin:.4rem 0}
+
+/* checklist */
+ol.steps{list-style:none;padding:0;counter-reset:st;display:grid;gap:10px;max-width:none}
+ol.steps li{counter-increment:st;display:grid;grid-template-columns:2.2rem minmax(0,1fr);gap:12px;background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:12px 16px;margin:0}
+ol.steps li::before{content:counter(st);display:grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--accent-soft);color:var(--accent);font:600 15px/1 var(--f-ui)}
+ol.steps b{font-family:var(--f-ui);font-weight:600}
+
+/* tables */
+table.t{border-collapse:collapse;width:100%;font:13.5px/1.45 var(--f-ui);margin:.5rem 0 1.4rem;font-variant-numeric:tabular-nums;background:var(--paper)}
+table.t th,table.t td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--rule);white-space:nowrap}
+table.t th{font-weight:600;background:var(--thead);border-bottom:1px solid var(--rule);vertical-align:bottom;font-size:12.5px}
+table.t tr:last-child td{border-bottom:none}
+table.t td:first-child,table.t th:first-child{text-align:left}
+table.t.wrap td,table.t.wrap th{white-space:normal;text-align:left;vertical-align:top}
+table.t td.best{color:var(--accent);font-weight:600}
+.tscroll{overflow-x:auto;max-width:100%;border:1px solid var(--rule);border-radius:8px;margin:.5rem 0 1.4rem}
+.tscroll>table.t{margin:0}
+.cap{font:13.5px/1.55 var(--f-ui);color:var(--muted);margin:1.4rem 0 .3rem;max-width:72ch}
+.cap b{color:var(--ink)}
+
+/* details, refs, code */
+details{background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:0 16px;margin:.6rem 0}
+details summary{cursor:pointer;font:600 14.5px/1.5 var(--f-ui);padding:11px 0;list-style:none;display:flex;justify-content:space-between;gap:12px}
+details summary::-webkit-details-marker{display:none}
+details summary::after{content:"+";color:var(--accent);font-weight:600}
+details[open] summary::after{content:"−"}
+details[open]{padding-bottom:6px}
+.refs p{font-size:.9rem;padding-left:1.4em;text-indent:-1.4em;margin:.4rem 0;line-height:1.55}
+pre{background:var(--code);padding:14px;overflow-x:auto;font:12.5px/1.55 var(--f-mono);border-radius:8px;max-width:100%;margin:.6rem 0}
+code{font:.86em var(--f-mono);background:var(--code);padding:1px 4px;border-radius:3px}
+.citebox{position:relative}
+.citebox button{position:absolute;top:8px;right:8px}
+
+/* figures and interactive panels */
+figure{margin:1.8rem 0}
+figure svg{background:var(--paper);border:1px solid var(--rule);border-radius:8px}
+.widget{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:18px;margin:2rem 0;font:14px/1.5 var(--f-ui);box-shadow:var(--shadow)}
+@media(min-width:1020px) and (max-width:1179px){.widget.wide,figure.wide{margin-left:-110px;margin-right:-110px}}
+@media(min-width:1360px){.widget.wide,figure.wide{margin-right:-160px}}
+.widget>h4{margin:0 0 .3rem;font-size:16px;font-weight:600;line-height:1.35}
+.widget>h4::before{content:"Interactive";display:inline-block;font:600 10.5px/1 var(--f-ui);letter-spacing:.08em;text-transform:uppercase;background:var(--accent-soft);color:var(--accent);padding:4px 8px;border-radius:999px;margin-right:9px;vertical-align:2px}
+.widget .sub{color:var(--muted);margin:0 0 .9rem;max-width:80ch}
+.widget svg{border:none}
+.ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:.5rem 0}
 .ctl label{color:var(--muted)}
-select,input[type=number],input[type=text],button{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--rule);border-radius:4px;padding:4px 7px}
-button{cursor:pointer}
-button.pri{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+select,input[type=number],input[type=text],button{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--rule);border-radius:6px;padding:5px 9px}
+input[type=range]{accent-color:var(--accent)}
+button{cursor:pointer;transition:border-color .15s,background-color .15s}
+button:hover{border-color:var(--accent)}
+button.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:500}
 button:disabled{opacity:.55;cursor:default}
-.grid2{display:grid;grid-template-columns:1fr;gap:14px}
+.grid2{display:grid;grid-template-columns:1fr;gap:18px}
+.grid2>*{min-width:0}
 @media(min-width:760px){.grid2{grid-template-columns:minmax(300px,380px) 1fr}}
-svg{display:block;max-width:100%;height:auto;touch-action:none}
+figure svg,.widget svg{display:block;max-width:100%;height:auto}
+mjx-container svg{display:inline;max-width:none}
+figure svg text,.widget svg text{font-family:var(--f-ui)}
+#plot{touch-action:none;background:var(--bg);border-radius:8px}
 .metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
-.m{border:1px solid var(--rule);border-radius:4px;padding:6px 8px}
-.m .k{color:var(--muted);font-size:12px}
-.m .v{font:600 17px/1.3 ui-monospace,Consolas,monospace}
-.m.hi{border-color:var(--accent);background:var(--accent-soft)}
-.coords input{width:72px}
-.coords td,.coords th{padding:2px 4px;text-align:center}
-.coords{font-size:13px;border-collapse:collapse}
+.m{background:var(--bg);border-radius:6px;padding:7px 9px}
+.m .k{color:var(--muted);font-size:12px;line-height:1.3}
+.m .v{font:600 16px/1.35 var(--f-mono);font-variant-numeric:tabular-nums}
+.m.hi{background:var(--accent-soft)}
+.m.hi .v{color:var(--accent)}
+.coords{font-size:13px;border-collapse:collapse;font-variant-numeric:tabular-nums;margin-top:10px}
+.coords td,.coords th{padding:3px 5px;text-align:center;white-space:nowrap}
+.coords th{font-weight:500;color:var(--muted);font-size:12px;line-height:1.25}
+.coords input{width:70px}
+.coords td.nat{color:var(--s2);font-family:var(--f-mono);font-size:12.5px}
+.ctxline{font-size:13px;color:var(--muted);margin:.3rem 0 .5rem;padding:8px 12px;background:var(--bg);border-radius:6px}
+.ctxline b{color:var(--ink);font-weight:600}
+.widget .tscroll{border:none;border-radius:0}
 .note{color:var(--muted);font-size:12.5px}
 .warn{color:var(--warn)} .good{color:var(--good)}
 .status{min-height:1.4em;font-size:13px;color:var(--muted)}
-.decision{font-size:14px;margin:.4rem 0}
-footer{border-top:1px solid var(--rule);margin-top:3rem;padding:1.2rem 0 3rem;color:var(--muted);font-size:.9rem}
+.decision{font-size:14px;margin:.5rem 0;padding:10px 12px;background:var(--accent-soft);border-radius:6px}
+.key{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12.5px;color:var(--muted);margin:.5rem 0}
+.sw{display:inline-block;width:11px;height:11px;border-radius:50%;vertical-align:-1px;margin-right:5px}
+.sw.s1{border:2px solid var(--s1);background:var(--paper)}
+.sw.s2{background:var(--s2)}
+.simgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px 18px;padding:12px;background:var(--bg);border-radius:8px;margin-bottom:10px}
+.simgrid label{display:block;color:var(--muted);font-size:12.5px;margin-bottom:3px}
+.simgrid output{font-family:var(--f-mono);color:var(--ink);font-weight:600}
+.simgrid input[type=range],.simgrid select{width:100%}
+.simsay{font-size:14px;margin:.6rem 0 .4rem;padding:10px 12px;background:var(--s2-soft);border-radius:6px}
+
+/* plot element styles (theme-aware via tokens) */
+.pt-s1{fill:var(--paper);stroke:var(--s1);stroke-width:1.6}
+.pt-s2{fill:var(--s2);stroke:var(--paper);stroke-width:1.2}
+.pt-lab{fill:var(--paper);font-weight:700;font-size:10px}
+.ax{stroke:var(--ink);stroke-opacity:.3;fill:none}
+.grid{stroke:var(--ink);stroke-opacity:.08}
+.tx{fill:var(--ink);font-size:10.5px}
+.txm{fill:var(--muted);font-size:10.5px}
+.hero-s1{fill:var(--s1-soft);stroke:var(--s1);stroke-width:1.2}
+.hero-s2{fill:var(--s2-soft);stroke:var(--s2);stroke-width:1.2}
+.hero-box{fill:var(--bg);stroke:var(--rule);stroke-width:1}
+.plot1{fill:var(--paper);stroke:var(--s1);stroke-width:1.2}
+.plot2{fill:var(--s2);stroke:none}
+.flow-arrow{stroke:var(--muted);stroke-width:1.4;fill:none}
+.flow-head{fill:var(--muted)}
+
+footer{border-top:1px solid var(--rule);margin-top:3.2rem;padding-block:1.4rem 3rem;color:var(--muted);font:13.5px/1.55 var(--f-ui)}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important}}
+@media print{
+  header.top,.toc,.ctl,.status,#runAudit,.citebox button,.tabs{display:none!important}
+  .tabpanel[hidden]{display:block!important}
+  body{background:#fff;color:#000;font-size:11pt}
+  .widget{box-shadow:none;break-inside:avoid}
+  .mast{background:none}
+}
 </style>
-</head>
-<body>
-<header class="top"><div class="bar">
-  <span class="badge">Preprint</span>
-  <span>
-    <a href="#explorer">Interactive explorer</a>
-    <a href="https://github.com/lunganlungpg/stage-aware-dsd-followup">Code &amp; data</a>
-    <a href="#cite">Cite</a>
-    <button id="themeBtn" aria-label="Toggle colour theme" style="margin-left:14px">◐</button>
-  </span>
-</div></header>
 
-<main class="wrap">
-<h1>Stage-aware follow-up designs for definitive screening experiments: exact criteria, rank completion and pooled-criterion bias</h1>
-<p class="authors">Lunganlung P G<sup>*</sup>, Prabhakar Verma</p>
-<p class="affil">Division of Agricultural Statistics, The Graduate School, ICAR-Indian Agricultural Research Institute, New Delhi 110012, India<br><sup>*</sup>Corresponding author</p>
+<header class="top bleed"><div class="bleed-in bar">
+  <a class="brand" href="#top" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="5" style="fill:var(--accent)"/><rect x="5" y="5" width="6" height="6" rx="1" style="fill:var(--accent-ink);opacity:.55"/><rect x="13" y="5" width="6" height="6" rx="1" style="fill:var(--accent-ink);opacity:.55"/><rect x="5" y="13" width="6" height="6" rx="1" style="fill:var(--accent-ink);opacity:.55"/><rect x="13" y="13" width="6" height="6" rx="1" style="fill:var(--s2)"/></svg>
+    <span>Stage-aware follow-up <small>· preprint v2</small></span>
+  </a>
+  <nav aria-label="Page">
+    <a class="opt" href="#simulator">Simulator</a>
+    <a class="opt" href="#explorer">Explorer</a>
+    <a class="opt" href="#checklist">Checklist</a>
+    <a class="opt" href="https://github.com/lunganlungpg/stage-aware-dsd-followup">Code</a>
+    <label class="tog" for="fieldTog"><input type="checkbox" id="fieldTog" checked> Field notes</label>
+    <button id="themeBtn" class="iconbtn" type="button" aria-label="Toggle colour theme">◐</button>
+  </nav>
+</div><div class="progress" id="progress"></div></header>
 
-<div class="abstract">
-<b>Abstract.</b> A definitive screening design is often followed by a small second batch of runs on the factors that appear active, and the analysis of the combined data then includes a fixed stage effect. We study how these follow-up runs should be chosen. Profiling the unrestricted stage shift yields closed forms for the integrated variance of baseline prediction and of pairwise differences between factor settings, which are distinct design criteria. We give an index of stage confounding with an exact expression for the cost of fitting the stage effect, and an identity showing that a pooled contrast criterion overstates precision by a term governed by the directional leverage of the between-stage regressor displacement. When the projected screening design has rank deficiency $q$, we show that at least $q+1$ follow-up runs are needed to restore full rank and that $q+1$ runs suffice for suitably placed points. For computation, we derive a centred rank-two update for coordinate exchange, a trace lower bound and a convex-relaxation lower bound. In three screening projections, stage-aware selection reduced integrated excess prediction variance by 2.7–35.4% relative to selection by the unblocked criterion; in a rank-saturating case, pooled contrast selection chose a design whose stage-adjusted contrast variance was 64% higher than that of the stage-aware design.
+<section class="mast bleed" id="top"><div class="bleed-in">
+  <p class="kicker"><span class="chip acc">Preprint</span><span class="chip">Agricultural statistics</span><span class="chip">Design of experiments</span></p>
+  <h1>Stage-aware follow-up designs for definitive screening experiments</h1>
+  <p class="subtitle">Exact criteria, rank completion and pooled-criterion bias</p>
+  <p class="byline"><span>Lunganlung P. G.<sup>*</sup></span><span>Prabhakar Verma</span></p>
+  <p class="affil">Division of Agricultural Statistics, The Graduate School, ICAR-Indian Agricultural Research Institute, New Delhi 110012, India · <sup>*</sup>Corresponding author</p>
+  <dl class="meta">
+    <div><dt>Version</dt><dd>2 · 23 November 2026</dd></div>
+    <div><dt>Status</dt><dd>Not peer reviewed</dd></div>
+    <div><dt>Code and data</dt><dd><a href="https://github.com/lunganlungpg/stage-aware-dsd-followup">GitHub · MIT licence</a></dd></div>
+    <div><dt>Reproducibility</dt><dd>Tables recomputed in your browser</dd></div>
+  </dl>
+  <div class="stats">
+    <div class="stat"><b>35.4%</b>lower prediction variance from stage-aware selection in the tissue-culture case</div>
+    <div class="stat s2c"><b>64%</b>higher contrast variance from the pooled choice in the rank-saturating case</div>
+    <div class="stat s1c"><b>q + 1</b>follow-up runs at minimum after a rank-deficient screen (Theorem 1)</div>
+    <div class="stat"><b>4,362</b>screening projections audited for rank, live on this page</div>
+  </div>
+</div></section>
+
+<div class="page">
+<nav class="toc" id="toc" aria-label="Contents"><p>Contents</p></nav>
+<main>
+<section id="summary">
+<div class="tabs" role="tablist" aria-label="Summary">
+  <button type="button" role="tab" id="tab-abs" aria-selected="true" aria-controls="pan-abs">Abstract</button>
+  <button type="button" role="tab" id="tab-pls" aria-selected="false" aria-controls="pan-pls" tabindex="-1">For agronomists</button>
+  <button type="button" role="tab" id="tab-hl" aria-selected="false" aria-controls="pan-hl" tabindex="-1">Highlights</button>
 </div>
-<p class="kw"><b>Keywords:</b> Fixed block effect; I-optimality; Rank deficiency; Response surface; Sequential design; Sherman–Morrison identity &nbsp;·&nbsp; <b>MSC 2020:</b> 62K05; 62K20, 62K10</p>
-<p class="kw">This page is an interactive version of the manuscript. Every number in the tables can be recomputed in the browser from the stored designs, and with the Python and R packages in the <a href="https://github.com/lunganlungpg/stage-aware-dsd-followup">repository</a>.</p>
+<div class="tabpanel" id="pan-abs" role="tabpanel" aria-labelledby="tab-abs">
+<p>A definitive screening design is often followed by a small second batch of runs on the factors that appear active, and the analysis of the combined data then includes a fixed stage effect. We study how these follow-up runs should be chosen. Profiling the unrestricted stage shift yields closed forms for the integrated variance of baseline prediction and of pairwise differences between factor settings, which are distinct design criteria. We give an index of stage confounding with an exact expression for the cost of fitting the stage effect, and an identity showing that a pooled contrast criterion overstates precision by a term governed by the directional leverage of the between-stage regressor displacement. When the projected screening design has rank deficiency $q$, we show that at least $q+1$ follow-up runs are needed to restore full rank and that $q+1$ runs suffice for suitably placed points. For computation, we derive a centred rank-two update for coordinate exchange, a trace lower bound and a convex-relaxation lower bound. In three screening projections, stage-aware selection reduced integrated excess prediction variance by 2.7–35.4% relative to selection by the unblocked criterion; in a rank-saturating case, pooled contrast selection chose a design whose stage-adjusted contrast variance was 64% higher than that of the stage-aware design. A plant tissue-culture illustration shows how the results translate into a concrete second-batch plan.</p>
+</div>
+<div class="tabpanel" id="pan-pls" role="tabpanel" aria-labelledby="tab-pls" hidden>
+<p>Researchers often test many inputs at once in a small screening trial, such as fertilizer doses, growth regulators or priming treatments. They then run a second, smaller trial on the few inputs that mattered. That second trial is usually done in a <b>different season, greenhouse batch or culture cycle</b>, and the whole response level can shift between the two: a cooler rabi season, fresher explants, a new lot of medium.</p>
+<p>The usual remedy is to include a season effect when the two trials are analysed together. This paper shows that the season effect must also be considered <b>when deciding which treatment combinations go into the second trial</b>. If it is ignored at the planning stage, the chosen plots can look excellent on paper and still give predictions up to about a third less precise once the season effect is fitted.</p>
+<p>The paper gives three practical tools: a score for any proposed second-season plan that matches the question you care about; a rule for the <b>minimum number of new plots</b>, which is the number of directions the screening trial could not estimate plus one; and a check that warns when a plan relies on season differences the analysis will not credit. The interactive figures let you place second-season plots yourself and watch these scores change.</p>
+</div>
+<div class="tabpanel" id="pan-hl" role="tabpanel" aria-labelledby="tab-hl" hidden>
+<ul>
+<li>Follow-up runs should be chosen with the same stage (season or batch) effect that will be fitted at analysis.</li>
+<li>Closed forms separate two goals: predicting the response ($\Psi$) and comparing settings ($C$).</li>
+<li>A pooled criterion overstates precision by an exact amount set by the directional leverage $\boldsymbol\Delta^{\mathsf T}\mathbf S^{-1}\boldsymbol\Delta$.</li>
+<li>A rank-deficient screening projection needs at least $q+1$ follow-up runs, and $q+1$ well-placed runs are enough.</li>
+<li>Stage-aware selection lowered excess prediction variance by up to 35% in the study.</li>
+</ul>
+</div>
+<p class="kw"><b>Keywords:</b> Fixed block effect; I-optimality; Rank deficiency; Response surface; Sequential design; Sherman–Morrison identity; Agricultural experimentation · <b>MSC 2020:</b> 62K05; 62K10, 62K20</p>
+</section>
+
+<figure class="wide" id="fig0">
+<svg viewBox="0 0 860 236" role="img" aria-label="Season 1 screening of 13 plots, then 4 follow-up plots in season 2, then a combined analysis where the response curve has the same shape but is shifted by delta">
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" class="flow-head"/></marker></defs>
+  <rect class="hero-s1" x="14" y="20" width="232" height="190" rx="10"/>
+  <text x="30" y="46" class="tx" style="font-weight:600;font-size:13px;fill:var(--s1)">Season 1 · kharif screening</text>
+  <g style="stroke:var(--s1);stroke-width:1.4;stroke-linecap:round;opacity:.7">
+    <line x1="170" y1="60" x2="165" y2="72"/><line x1="186" y1="58" x2="181" y2="70"/><line x1="202" y1="60" x2="197" y2="72"/><line x1="218" y1="58" x2="213" y2="70"/>
+    <line x1="178" y1="76" x2="173" y2="88"/><line x1="194" y1="74" x2="189" y2="86"/><line x1="210" y1="76" x2="205" y2="88"/>
+  </g>
+  <g>
+    <rect class="plot1" x="30" y="98" width="34" height="22" rx="3"/><rect class="plot1" x="72" y="98" width="34" height="22" rx="3"/><rect class="plot1" x="114" y="98" width="34" height="22" rx="3"/><rect class="plot1" x="156" y="98" width="34" height="22" rx="3"/><rect class="plot1" x="198" y="98" width="34" height="22" rx="3"/>
+    <rect class="plot1" x="30" y="128" width="34" height="22" rx="3"/><rect class="plot1" x="72" y="128" width="34" height="22" rx="3"/><rect class="plot1" x="114" y="128" width="34" height="22" rx="3"/><rect class="plot1" x="156" y="128" width="34" height="22" rx="3"/><rect class="plot1" x="198" y="128" width="34" height="22" rx="3"/>
+    <rect class="plot1" x="72" y="158" width="34" height="22" rx="3"/><rect class="plot1" x="114" y="158" width="34" height="22" rx="3"/><rect class="plot1" x="156" y="158" width="34" height="22" rx="3"/>
+  </g>
+  <text x="30" y="200" class="txm">13 plots · 6 factors screened · n₁ = 2m + 1</text>
+
+  <path class="flow-arrow" d="M252,115 H300" marker-end="url(#ah)"/>
+  <text x="276" y="104" text-anchor="middle" class="txm">keep k = 3</text>
+  <text x="276" y="134" text-anchor="middle" class="txm">active</text>
+
+  <rect class="hero-s2" x="306" y="20" width="206" height="190" rx="10"/>
+  <text x="322" y="46" class="tx" style="font-weight:600;font-size:13px;fill:var(--s2)">Season 2 · rabi follow-up</text>
+  <g style="stroke:var(--s2);stroke-width:1.5;stroke-linecap:round">
+    <circle cx="478" cy="74" r="8" style="fill:var(--s2)"/>
+    <line x1="478" y1="58" x2="478" y2="54"/><line x1="478" y1="90" x2="478" y2="94"/><line x1="462" y1="74" x2="458" y2="74"/><line x1="494" y1="74" x2="498" y2="74"/>
+    <line x1="467" y1="63" x2="464" y2="60"/><line x1="489" y1="85" x2="492" y2="88"/><line x1="489" y1="63" x2="492" y2="60"/><line x1="467" y1="85" x2="464" y2="88"/>
+  </g>
+  <g>
+    <rect class="plot2" x="340" y="104" width="52" height="30" rx="4"/><rect class="plot2" x="402" y="104" width="52" height="30" rx="4"/>
+    <rect class="plot2" x="340" y="142" width="52" height="30" rx="4"/><rect class="plot2" x="402" y="142" width="52" height="30" rx="4"/>
+    <text x="366" y="123" text-anchor="middle" class="pt-lab" style="font-size:11px">1</text><text x="428" y="123" text-anchor="middle" class="pt-lab" style="font-size:11px">2</text>
+    <text x="366" y="161" text-anchor="middle" class="pt-lab" style="font-size:11px">3</text><text x="428" y="161" text-anchor="middle" class="pt-lab" style="font-size:11px">4</text>
+  </g>
+  <text x="322" y="200" class="txm">n₂ = 4 new plots, placed by Ψ or C</text>
+
+  <path class="flow-arrow" d="M518,115 H560" marker-end="url(#ah)"/>
+  <text x="539" y="104" text-anchor="middle" class="txm">analyse</text>
+  <text x="539" y="134" text-anchor="middle" class="txm">together</text>
+
+  <rect class="hero-box" x="566" y="20" width="280" height="190" rx="10"/>
+  <text x="582" y="46" class="tx" style="font-weight:600;font-size:13px">Combined analysis</text>
+  <text x="582" y="64" class="txm">same response shape, level shifted by δ</text>
+  <line x1="590" y1="178" x2="826" y2="178" class="ax"/>
+  <line x1="590" y1="178" x2="590" y2="76" class="ax"/>
+  <path d="M600,176 Q708,76 816,176" style="fill:none;stroke:var(--s1);stroke-width:2.2"/>
+  <path d="M600,150 Q708,50 816,150" style="fill:none;stroke:var(--s2);stroke-width:2.2"/>
+  <path d="M708,125 V102" style="stroke:var(--ink);stroke-width:1.3" marker-end="url(#ah)"/>
+  <text x="716" y="118" class="tx" style="font-size:13px;font-style:italic">δ</text>
+  <text x="600" y="196" class="txm">dose →</text>
+  <circle cx="694" cy="196" r="4" style="fill:var(--s1)"/><text x="702" y="200" class="txm">season 1</text>
+  <circle cx="760" cy="196" r="4" style="fill:var(--s2)"/><text x="768" y="200" class="txm">season 2</text>
+  <text x="430" y="230" text-anchor="middle" class="txm">The shift δ is unknown, so the follow-up plots must be chosen with δ in the model.</text>
+</svg>
+<figcaption class="cap"><b>Fig. 0</b> The two-stage workflow studied in this paper. Blue marks the first stage (screening season or batch) and amber the follow-up stage in every figure.</figcaption>
+</figure>
 
 <h2>1. Introduction</h2>
 <p>Definitive screening designs are three-level designs in which every linear main effect is estimated free of aliasing with second-order terms while some information on curvature is retained (Jones and Nachtsheim, 2011; Xiao et al., 2012). They are often used sequentially: many factors are screened, the few that appear active are selected (Jones and Nachtsheim, 2017), and further runs are added so that a full quadratic model in the selected factors can be fitted (Nachtsheim and Jones, 2018; Liu et al., 2023; Fidaleo et al., 2026).</p>
-<p>The added runs are usually performed later, as a separate batch, and a new batch can shift the level of the whole response surface. If the two batches are analysed together with a fixed stage effect, the design question is whether the follow-up runs should also be <em>chosen</em> with that stage effect in the model. A simple alternative is to choose them with an unblocked criterion and add the stage term only at analysis. The two approaches rank designs identically, up to a constant, when the regressor means of the two stages coincide, but a small follow-up batch from a definitive screening design rarely has this property.</p>
+<p>The added runs are usually performed later, as a separate batch, and a new batch can shift the level of the whole response surface. In agricultural research this is the rule rather than the exception. A field screening trial in the kharif season is followed up in rabi or in the next year. A tissue-culture screen is followed by cultures initiated weeks later from different stock plants. A greenhouse seed-priming screen is followed by a second batch under different day length. If the two batches are analysed together with a fixed stage effect, the design question is whether the follow-up runs should also be <em>chosen</em> with that stage effect in the model. A simple alternative is to choose them with an unblocked criterion and add the stage term only at analysis. The two approaches rank designs identically, up to a constant, when the regressor means of the two stages coincide, but a small follow-up batch from a definitive screening design rarely has this property.</p>
+
+<p class="cap"><b>Table 0</b> Where two-stage experiments with a stage shift arise in agricultural research.</p>
+<div class="tscroll"><table class="t wrap">
+<tr><th>Setting</th><th>Stage 1 (screening)</th><th>Stage 2 (follow-up)</th><th>Typical source of the shift δ</th></tr>
+<tr><td>Field crops</td><td>Kharif (wet) season trial</td><td>Rabi season or next year</td><td>Rainfall, temperature, pest and disease pressure, residual soil nutrients</td></tr>
+<tr><td>Plant tissue culture</td><td>First culture batch</td><td>Cultures initiated later</td><td>Explant age and source, growth-room conditions, medium lot</td></tr>
+<tr><td>Greenhouse and pot studies</td><td>First batch of pots</td><td>Later batch</td><td>Day length, irradiance, potting-mix lot</td></tr>
+<tr><td>Seed and soil laboratories</td><td>First assay run</td><td>Later assay run</td><td>Reagent lot, incubator, analyst</td></tr>
+<tr><td>Food and post-harvest processing</td><td>Raw material from one harvest</td><td>Raw material from a later harvest</td><td>Moisture, maturity and composition of the raw material</td></tr>
+<tr><td>Livestock and fish feeding trials</td><td>First cohort of animals</td><td>Later cohort</td><td>Initial body weight, season, water temperature</td></tr>
+</table></div>
+
 <p>Optimal blocking of response surface designs with fixed or random block effects is well developed (Atkinson and Donev, 1989; Cook and Nachtsheim, 1989; Goos and Vandebroek, 2001; Goos and Donev, 2006; Goos and Jones, 2011), and blocking schemes exist for definitive screening designs and related three-level designs (Jones and Nachtsheim, 2016; Núñez Ares and Goos, 2023). Those results concern a design constructed in one step. Here the first stage is fixed, the second stage is small and the stage shift is unrestricted, so the questions are how many runs are needed and where to place them. We do not propose a new optimality principle; the I-criterion under a fixed block effect is standard (Atkinson et al., 2007). The contributions are exact results that make the follow-up decision transparent:</p>
 <ol class="contrib" type="i">
 <li>closed-form stage-adjusted criteria for two prediction targets, the absolute Stage 1 baseline mean and differences between factor settings (Proposition 1);</li>
@@ -122,7 +402,7 @@ footer{border-top:1px solid var(--rule);margin-top:3rem;padding:1.2rem 0 3rem;co
 <li>the minimum number of follow-up runs that restores full rank, shown to be attainable (Theorem 1), and a run-count rule built on it;</li>
 <li>a centred rank-two update for coordinate exchange (Proposition 4), an analytic lower bound (Proposition 5) and a convex-relaxation lower bound (Theorem 2).</li>
 </ol>
-<p>Section 2 sets up the model and derives the criteria. Section 3 treats the number of runs and Section 4 the computation and bounds. Section 5 reports a numerical study on three screening projections, and Section 6 applies the results to a plant tissue-culture setting. Section 7 discusses limitations. Proofs are in Appendix A.</p>
+<p>Section 2 sets up the model and derives the criteria. Section 3 treats the number of runs and Section 4 the computation and bounds. Section 5 reports a numerical study on three screening projections, and Section 6 applies the results to a plant tissue-culture setting. Section 7 condenses the results into a checklist for practitioners, and Section 8 discusses limitations. Proofs are in Appendix A and a glossary in Appendix B.</p>
 
 <h2>2. Model and stage-adjusted criteria</h2>
 <h3>2.1. Fixed-shift model</h3>
@@ -131,9 +411,13 @@ $$\mathbf Y_1=\mathbf F_1\boldsymbol\beta+\boldsymbol\varepsilon_1,\qquad \mathb
 <p>where $\mathbf F_j$ is the model matrix of stage $j$ and $\delta\in\mathbb R$ is an unrestricted stage shift. The Stage 1 baseline mean is $\mu_1(\mathbf x)=\mathbf f(\mathbf x)^{\mathsf T}\boldsymbol\beta$. Prediction is averaged over a probability measure $\chi$ on the region of interest; we take $\chi$ uniform on $[-1,1]^k$. Write</p>
 $$\boldsymbol\Omega=\mathrm E_\chi\{\mathbf f(\mathbf x)\mathbf f(\mathbf x)^{\mathsf T}\},\qquad \boldsymbol\mu_z=\mathrm E_\chi\{\mathbf z(\mathbf x)\},\qquad \mathbf V=\operatorname{Cov}_\chi\{\mathbf z(\mathbf x)\}.\tag{2}$$
 <p>These moments are exact on the cube ($\mathrm E x_j^a=0$ for odd $a$ and $1/(a+1)$ for even $a$) and are reproduced by three-point Gauss–Legendre quadrature in each coordinate.</p>
+<div class="field"><p class="eyebrow">Field note</p>
+<p>Model (1) says the response surface has the <em>same shape</em> in both seasons. Nitrogen response, curvature and interactions are unchanged, but Season 2 may sit higher or lower by an unknown amount $\delta$, for example 0.4 t/ha because of better winter weather. Factors are coded so that the lowest dose is $-1$, the middle dose $0$ and the highest dose $+1$.</p></div>
 <p>Let $\mathbf H_j=\mathbf I_{n_j}-\mathbf 1_{n_j}\mathbf 1_{n_j}^{\mathsf T}/n_j$, let $\mathbf Z_j$ be the non-intercept columns of $\mathbf F_j$, $\bar{\mathbf z}_j=\mathbf Z_j^{\mathsf T}\mathbf 1_{n_j}/n_j$, and</p>
 $$\mathbf M_a=\mathbf F_1^{\mathsf T}\mathbf F_1+\mathbf F_2^{\mathsf T}\mathbf H_2\mathbf F_2,\qquad \mathbf S_j=\mathbf Z_j^{\mathsf T}\mathbf H_j\mathbf Z_j,\qquad \mathbf S=\mathbf S_1+\mathbf S_2.\tag{3}$$
 <p>$\mathbf M_a$ is the information matrix for $\boldsymbol\beta$ after profiling out $\delta$, and $\mathbf S$ is the pooled within-stage scatter of the regressors. In words: $\mathbf F_1$ and $\mathbf F_2$ hold the quadratic model terms of the screening and follow-up runs; $\mathbf Z_j$ is $\mathbf F_j$ without its column of ones; $\bar{\mathbf z}_1$ and $\bar{\mathbf z}_2$ are the average regressor vectors of the two stages; $\mathbf S_j$ measures how much the regressors vary <em>within</em> stage $j$; and $\mathbf V$ and $\boldsymbol\mu_z$ describe how the regressors vary over the region where predictions are wanted. Because the stage shift is fitted, only within-stage variation carries information about the slope and curvature coefficients, which is why $\mathbf S$ rather than the total scatter appears in every criterion below.</p>
+<div class="field"><p class="eyebrow">Field note</p>
+<p>Once a season effect is fitted, Season 2 plots are only compared <em>with each other</em>. Four plots that all receive similar doses therefore teach the analysis almost nothing about dose response, however different they are from Season 1. This one fact drives every result in the paper.</p></div>
 
 <h3>2.2. Baseline prediction and pairwise comparison</h3>
 <div class="prop"><b>Proposition 1.</b> <i>Suppose $\mathbf M_a$ is nonsingular. Then, for every $\mathbf x$,</i>
@@ -144,6 +428,10 @@ $$\Phi_I=\operatorname{tr}(\mathbf M_a^{-1}\boldsymbol\Omega)=\frac1{n_1}+\Psi,\
 $$C=\mathrm E\,\frac{\operatorname{Var}\{\hat\mu_1(\mathbf x)-\hat\mu_1(\mathbf x')\}}{\sigma^2}=2\operatorname{tr}(\mathbf S^{-1}\mathbf V).\tag{6}$$
 </div>
 <p>The term $1/n_1$ does not depend on the follow-up runs, so for baseline prediction the design problem is to minimise the excess variance $\Psi$. The contrast criterion $C$ contains no intercept term. The two criteria differ by the rank-one term in $\mathbf Q$, which weights the direction $\boldsymbol\mu_z-\bar{\mathbf z}_1$ separating the Stage 1 regressor mean from the region average; their rankings of exact designs need not agree, and Section 5 shows that they can disagree.</p>
+<div class="field"><p class="eyebrow">Field note: which question are you asking?</p>
+<p><b>$\Psi$ (prediction).</b> "What yield should I expect from this fertilizer combination?" It averages the uncertainty of predicted response over the whole tested range.</p>
+<p><b>$C$ (comparison).</b> "How much better is combination A than combination B?" Absolute levels cancel in a comparison, so $C$ ignores how well the overall level is pinned down.</p>
+<p>A variety-release or recommendation trial usually needs $\Psi$. A trial that ranks practices needs $C$. Decide this before placing plots, because the best plots differ.</p></div>
 
 <h3>2.3. Stage confounding and pooled criteria</h3>
 <p>Let $\mathbf F=[\mathbf F_1^{\mathsf T},\mathbf F_2^{\mathsf T}]^{\mathsf T}$, $\mathbf M_u=\mathbf F^{\mathsf T}\mathbf F$, $\mathbf P_F=\mathbf F\mathbf M_u^{-1}\mathbf F^{\mathsf T}$, $\mathbf s=(\mathbf 0_{n_1}^{\mathsf T},\mathbf 1_{n_2}^{\mathsf T})^{\mathsf T}$ and $\bar{\mathbf f}_2=\mathbf F_2^{\mathsf T}\mathbf 1_{n_2}/n_2$. The unblocked I-criterion is $I_u=\operatorname{tr}(\mathbf M_u^{-1}\boldsymbol\Omega)$.</p>
@@ -153,6 +441,8 @@ $$h=n_2\,\bar{\mathbf f}_2^{\mathsf T}\mathbf M_u^{-1}\bar{\mathbf f}_2=\frac{\m
 $$\operatorname{tr}(\mathbf M_a^{-1}\boldsymbol\Omega)-\operatorname{tr}(\mathbf M_u^{-1}\boldsymbol\Omega)=\frac{n_2}{1-h}\,\bar{\mathbf f}_2^{\mathsf T}\mathbf M_u^{-1}\boldsymbol\Omega\mathbf M_u^{-1}\bar{\mathbf f}_2\;\ge0.\tag{8}$$
 </div>
 <p>The index $h$ is the squared cosine between the stage indicator and the column space of $\mathbf F$. A stage-aware policy chooses the follow-up runs that minimise $\Psi$; a stage-naive policy minimises $I_u$ and fits the stage effect at analysis, so its selected design is judged by $\Psi$. Both policies search the same designs; they differ only in how candidates are ranked. Expression (8) shows that the naive ranking is distorted by a term that is large when $h$ is close to one or when $\bar{\mathbf f}_2$ points towards poorly informed directions of $\mathbf M_u$.</p>
+<div class="field"><p class="eyebrow">Field note</p>
+<p>$h$ asks how well the season label could be predicted from the treatment combinations alone. If the second season contains only high-dose plots, "Season 2" and "high dose" are entangled and $h$ is near 1. The analysis then cannot tell a weather effect from a dose effect. Smaller $h$ is better.</p></div>
 <p>For contrasts, the matching pooled criterion is $C_u=2\operatorname{tr}(\mathbf S_{\rm pool}^{-1}\mathbf V)$, where $\mathbf S_{\rm pool}$ is the non-intercept information obtained by fitting a single common intercept.</p>
 <div class="prop"><b>Proposition 3.</b> <i>Let $\alpha=n_1n_2/(n_1+n_2)$ and $\boldsymbol\Delta=\bar{\mathbf z}_2-\bar{\mathbf z}_1$. Then</i>
 $$\mathbf S_{\rm pool}=\mathbf S+\alpha\,\boldsymbol\Delta\boldsymbol\Delta^{\mathsf T},\tag{9}$$
@@ -160,54 +450,82 @@ $$\mathbf S_{\rm pool}=\mathbf S+\alpha\,\boldsymbol\Delta\boldsymbol\Delta^{\ma
 $$C-C_u=\frac{2\alpha\,\boldsymbol\Delta^{\mathsf T}\mathbf S^{-1}\mathbf V\mathbf S^{-1}\boldsymbol\Delta}{1+\alpha\,\boldsymbol\Delta^{\mathsf T}\mathbf S^{-1}\boldsymbol\Delta}\;\ge0.\tag{10}$$
 </div>
 <p>The pooled criterion credits the between-stage separation $\alpha\boldsymbol\Delta\boldsymbol\Delta^{\mathsf T}$, which is real information only if $\delta=0$. By (10), the size of the overstatement depends on how $\boldsymbol\Delta$ is oriented relative to weakly informed directions of $\mathbf S$, not only on $\lVert\boldsymbol\Delta\rVert$. The directional leverage $\boldsymbol\Delta^{\mathsf T}\mathbf S^{-1}\boldsymbol\Delta$ is therefore the natural diagnostic: when it is large, the numerator of (10) is large relative to $\lVert\boldsymbol\Delta\rVert^2$, and a design ranked first by $C_u$ can be poor under the stage-adjusted analysis.</p>
+<div class="field"><p class="eyebrow">Field note</p>
+<p>A pooled criterion treats the difference between the seasons as free information about treatment effects. It is like crediting all of a rabi yield gain to the extra nitrogen applied that season, when part of it came from the cooler weather. Equation (10) gives the exact size of that false credit.</p></div>
 
-<!-- ======================= EXPLORER ======================= -->
+<section class="widget wide" id="simulator">
+  <h4>Season-shift simulator: what goes wrong if the season effect is ignored?</h4>
+  <p class="sub">Tissue-culture setting of Section 6: 13 screening cultures in batch 1 and 4 follow-up cultures in batch 2. The true response (shoots per explant) is a hypothetical quadratic surface chosen for illustration. Each dot is one simulated two-batch experiment, and 200 are shown. Move the batch shift and compare the two analyses.</p>
+  <div class="simgrid">
+    <div><label for="simDelta">Batch 2 shift δ (shoots per explant): <output id="simDeltaV"></output></label><input type="range" id="simDelta" min="-3" max="3" step="0.1" value="1.5"></div>
+    <div><label for="simSigma">Plot-to-plot error σ: <output id="simSigmaV"></output></label><input type="range" id="simSigma" min="0.3" max="2.5" step="0.05" value="1.25"></div>
+    <div><label for="simTarget">Quantity to estimate</label><select id="simTarget">
+      <option value="centre">Shoots on the standard medium (25 g/L · 1.0 · 0.30)</option>
+      <option value="gain">Gain of a high-BAP medium (30 · 1.375 · 0.175) over standard</option>
+      <option value="avg">Average over all media in the tested range</option>
+    </select></div>
+    <div><label for="simDesign">Batch 2 design</label><select id="simDesign">
+      <option value="psi_exact">Stage-aware Ψ design (Table 3)</option>
+      <option value="C_aware">Stage-aware C design (Table 3)</option>
+      <option value="Iu_naive">Stage-naive I_u design (Table 1)</option>
+    </select></div>
+  </div>
+  <svg id="simsvg" viewBox="0 0 680 230" role="img" aria-label="Simulated estimates under pooled and season-adjusted analyses"></svg>
+  <p class="simsay" id="simSay"></p>
+  <div class="tscroll"><table class="t" id="simTable"></table></div>
+  <p class="note">Bias and standard errors in the table are exact (computed from the linear estimators), not simulated. The surface used is $\mu_1 = 6 + 0.6x_1 + 1.2x_2 - 0.4x_3 - 0.8x_1^2 - x_2^2 - 0.3x_3^2 + 0.3x_1x_2 - 0.4x_2x_3$ in coded units.</p>
+</section>
+
 <section class="widget wide" id="explorer">
-  <h4>Interactive explorer: place the follow-up runs yourself</h4>
-  <p class="sub">Every quantity in Propositions 1–3 and Theorem 1 is recomputed in your browser whenever a run moves. Drag the filled points or edit their coordinates. Shading shows the baseline prediction variance (4) on the plotted slice, with the other active factors held at 0.</p>
+  <h4>Design explorer: place the second-season plots yourself</h4>
+  <p class="sub">Every quantity in Propositions 1–3 and Theorem 1 is recomputed in your browser whenever a run moves. Drag the amber points or edit their doses. Shading shows the baseline prediction variance (4) on the plotted slice, with the other active factors held at their middle level. Darker shading means less certain predictions.</p>
   <div class="ctl">
     <label for="scen">Scenario</label>
     <select id="scen">
-      <option value="6,3,4">(m,k,n₂) = (6,3,4) · full rank, tissue culture</option>
-      <option value="8,4,6">(8,4,6) · q = 2</option>
-      <option value="10,4,4">(10,4,4) · q = 3, rank-saturating</option>
+      <option value="6,3,4">Tissue-culture medium · (m,k,n₂) = (6,3,4) · full rank</option>
+      <option value="8,4,6">Rice nutrient trial over two seasons · (8,4,6) · q = 2</option>
+      <option value="10,4,4">Seed-priming greenhouse batches · (10,4,4) · q = 3</option>
       <option value="custom">Custom projection…</option>
     </select>
     <span id="customBox" hidden>
       <label for="cm">m</label><select id="cm"></select>
       <label for="cact">active</label><input id="cact" type="text" value="1,2,3" size="9" aria-label="Active factors, comma separated">
       <label for="cn2">n₂</label><input id="cn2" type="number" min="2" max="12" value="4" style="width:56px">
-      <button id="capply">Apply</button>
+      <button id="capply" type="button">Apply</button>
     </span>
   </div>
+  <p class="ctxline" id="ctxline"></p>
   <div class="ctl">
     <label for="preset">Load design</label>
     <select id="preset"></select>
-    <button id="opt-psi" class="pri">Optimise Ψ (stage-aware)</button>
-    <button id="opt-C">Optimise C</button>
-    <button id="opt-Iu">Optimise I<sub>u</sub> (stage-naive)</button>
+    <button id="opt-psi" class="pri" type="button">Optimise Ψ (stage-aware)</button>
+    <button id="opt-C" type="button">Optimise C</button>
+    <button id="opt-Iu" type="button">Optimise I<sub>u</sub> (stage-naive)</button>
     <label for="nstart">starts</label><input id="nstart" type="number" min="1" max="200" value="12" style="width:60px">
   </div>
-  <div class="status" id="status"></div>
+  <div class="status" id="status" aria-live="polite"></div>
   <div class="grid2">
     <div>
       <div class="ctl"><label for="ax">horizontal</label><select id="ax"></select><label for="ay">vertical</label><select id="ay"></select></div>
       <svg id="plot" viewBox="0 0 340 340" role="img" aria-label="Projection of the screening design and follow-up runs"></svg>
-      <p class="note">○ projected screening runs (number = multiplicity on this slice) · ● follow-up runs</p>
+      <div class="key"><span><span class="sw s1"></span>Stage 1 screening plots (number = plots stacked on this slice)</span><span><span class="sw s2"></span>Stage 2 follow-up plots (drag)</span></div>
     </div>
     <div>
       <div class="metrics" id="metrics"></div>
       <p class="note" id="verdict"></p>
       <div class="tscroll"><table class="coords" id="coords"></table></div>
-      <div class="ctl"><button id="copy">Copy design as CSV</button><span class="note" id="copied"></span></div>
+      <div class="ctl"><button id="copy" type="button">Copy plot plan as CSV</button><span class="note" id="copied" aria-live="polite"></span></div>
     </div>
   </div>
+  <p class="note">Factor names and dose ranges in the rice and seed-priming scenarios are illustrative mappings of the coded study designs. The numerical study itself is in coded units.</p>
 </section>
 
 <h2>3. Number of follow-up runs</h2>
 <p>Let $r_1=\operatorname{rank}(\mathbf F_1)$ and $q=p-r_1$ be the rank deficiency of the projected screening design.</p>
 <div class="prop"><b>Theorem 1.</b> <i>Let $n_2\ge1$. If $q&gt;0$ and $\operatorname{rank}(\mathbf M_a)=p$, then $n_2\ge q+1$. Conversely, if the region of interest has nonempty interior, there exist $q+1$ follow-up points, one of which may be any Stage 1 design point, for which $\operatorname{rank}(\mathbf M_a)=p$.</i></div>
-<p>Theorem 1 concerns rank only; it gives neither efficiency nor lack-of-fit guarantees. Its attainability part needs only a region with nonempty interior, so it continues to hold under linear or nonlinear inequality constraints such as safety limits on temperature or pressure. Attainability with $q+1$ runs can fail when follow-up runs must come from a finite candidate set, or when the region has empty interior in the coded factors, as with mixture constraints, where the model itself must be reparametrised. In those cases more than $q+1$ runs may be required, and the minimum should be found by checking $\operatorname{rank}(\mathbf M_a)$ directly on the feasible candidates. The residual degrees of freedom also depend on $n_2$. With $n_2=0$ no stage parameter is fitted and, if $r_1=p$, there are $n_1-p$ residual degrees of freedom. With $n_2=1$, $\mathbf H_2=\mathbf 0$, so $\mathbf M_a=\mathbf F_1^{\mathsf T}\mathbf F_1$: a single follow-up run only estimates its own stage shift and adds neither information nor a residual degree of freedom. For $n_2\ge2$ and $\operatorname{rank}(\mathbf M_a)=p$ there are $n_1+n_2-p-1$ residual degrees of freedom. The useful counts are therefore $n_2=0$ (only when $q=0$) and $n_2\in\{\max(2,q+1),\dots,n_{2,\max}\}$.</p>
+<div class="field"><p class="eyebrow">Field note</p>
+<p>A screening trial with only 17 or 21 plots cannot separate every curvature and interaction term once four factors are kept. Some combinations of terms are "invisible" to it, and $q$ counts them. Each invisible direction needs one new plot, and one more plot is used up estimating the season shift. Hence <b>at least $q+1$ new plots</b>, and a single new plot in a new season adds no information at all.</p></div>
+<p>Theorem 1 concerns rank only; it gives neither efficiency nor lack-of-fit guarantees. Its attainability part needs only a region with nonempty interior, so it continues to hold under linear or nonlinear inequality constraints such as an upper limit on total nutrient applied or a phytotoxicity limit on a growth regulator. Attainability with $q+1$ runs can fail when follow-up runs must come from a finite candidate set, for example only the doses available as commercial formulations, or when the region has empty interior in the coded factors, as with mixture constraints such as nutrient ratios that must sum to one, where the model itself must be reparametrised. In those cases more than $q+1$ runs may be required, and the minimum should be found by checking $\operatorname{rank}(\mathbf M_a)$ directly on the feasible candidates. The residual degrees of freedom also depend on $n_2$. With $n_2=0$ no stage parameter is fitted and, if $r_1=p$, there are $n_1-p$ residual degrees of freedom. With $n_2=1$, $\mathbf H_2=\mathbf 0$, so $\mathbf M_a=\mathbf F_1^{\mathsf T}\mathbf F_1$: a single follow-up run only estimates its own stage shift and adds neither information nor a residual degree of freedom. For $n_2\ge2$ and $\operatorname{rank}(\mathbf M_a)=p$ there are $n_1+n_2-p-1$ residual degrees of freedom. The useful counts are therefore $n_2=0$ (only when $q=0$) and $n_2\in\{\max(2,q+1),\dots,n_{2,\max}\}$.</p>
 <p>These facts lead to a simple planning rule. Given a minimum number of residual degrees of freedom $d_{\min}$ and a tolerance $\varepsilon$, choose the smallest useful $n_2$ for which the best design found has full rank, at least $d_{\min}$ residual degrees of freedom and $\Psi\le\varepsilon$. A target fractional reduction $\gamma$ from an estimable Stage 1 design corresponds to $\varepsilon=(1-\gamma)\Psi(0)$, and a target root-mean-square prediction standard error $r\sigma$ over $\chi$ corresponds to $\varepsilon=r^2-1/n_1$. If contrasts are the primary target, the rule is applied to $C$. The rule does not replace a separate requirement for pure-error replication (Gilmour and Trinca, 2012).</p>
 
 <h2>4. Computation and lower bounds</h2>
@@ -244,6 +562,12 @@ $$\Psi^*_{\rm exact}\;\ge\;\inf_\nu\Psi(\nu)\;\ge\;\Psi(\pi)-n_2\Big\{\sup_{\mat
 <tr><td>(8,4,6)</td><td>17</td><td>13</td><td>2</td><td>0.4538</td><td>0.5326</td><td>0.5326</td><td>14.79</td><td>14.79</td><td>0.476</td><td>0.672</td></tr>
 <tr><td>(10,4,4)</td><td>21</td><td>12</td><td>3</td><td>0.7049</td><td>0.7246</td><td>0.7246</td><td>2.72</td><td>2.72</td><td>0.460</td><td>0.638</td></tr>
 </table></div>
+
+<figure id="fig3">
+<svg id="fig3svg" viewBox="0 0 640 210" role="img" aria-label="Dot plot of Psi for aware, same-pool best and naive designs in three scenarios"></svg>
+<figcaption class="cap"><b>Fig. 3</b> Excess prediction variance $\Psi$ of the stage-aware design (filled), the best of the naive pool (open) and the naive-selected design (cross) in each scenario of Table 1. The gap between filled and cross is the price of ranking by the wrong criterion; lower is better.</figcaption>
+</figure>
+
 <p>In $(10,4,4)$ the projected screening design has rank 12 of $p=15$, so by Theorem 1 at least four follow-up runs are needed and the chosen $n_2=4$ lies exactly on the boundary $n_2-1=q$. Searches at this boundary reached the sweep limit more often (58 of 200 aware and 74 of 200 naive starts, against 2 of 400 in $(6,3,4)$). Over all 2,600 starts, 2,393 met the tolerance and 207 stopped at the sweep limit; none failed numerically, and in all 13 settings the selected start met the tolerance (Supplementary Tables S1–S2).</p>
 
 <h3>5.3. Pairwise comparison</h3>
@@ -259,15 +583,15 @@ $$\Psi^*_{\rm exact}\;\ge\;\inf_\nu\Psi(\nu)\;\ge\;\Psi(\pi)-n_2\Big\{\sup_{\mat
 <p>Choosing the wrong estimand has a cost. In $(6,3,4)$ the contrast-optimal design lowered $C$ from 0.516 to 0.450 (12.8%) relative to the baseline-optimal design but raised $\Psi$ from 0.357 to 0.419 (17.6%). In $(10,4,4)$ the two criteria led to the same local design: the $C$-aware and $\Psi$-aware designs agreed in both criteria to six decimal places and, after a signed permutation of factors, to within a root-mean-square coded difference of 0.001. Same-pool re-ranking also depends on the estimand: in the $(6,3,4)$ naive pool, re-ranking by $\Psi$ recovers 28.5 of 35.4 percentage points of loss, whereas re-ranking by $C$ recovers 1.6 of 7.7 (Supplementary Tables S4–S5).</p>
 
 <h3>5.4. The rank-saturating case</h3>
-<p>Proposition 3 explains the $(10,4,4)$ result. The stage-aware and $C_u$-selected designs have similar stage-mean displacements, $\lVert\boldsymbol\Delta\rVert=1.078$ and $1.045$. However, the smallest eigenvalue of $\mathbf S$ falls from 1.371 to 0.306 and the directional leverage $\boldsymbol\Delta^{\mathsf T}\mathbf S^{-1}\boldsymbol\Delta$ rises from 0.165 to 1.709, so the penalty (10) is 0.502 for the $C_u$-selected design against 0.021 for the stage-aware design. The pooled criterion credits a displacement lying along a weakly informed direction of $\mathbf S$; once $\delta$ is fitted, that information is lost. At the boundary $n_2-1=q$ every follow-up direction is needed for estimability, which makes such misplacement costly, although the boundary does not by itself force a large penalty. <a href="#explorer" data-load="10,4,4|Cu_pooled">Load the $C_u$-selected design in the explorer</a> and compare with <a href="#explorer" data-load="10,4,4|C_aware">the stage-aware design</a>.</p>
+<p>Proposition 3 explains the $(10,4,4)$ result. The stage-aware and $C_u$-selected designs have similar stage-mean displacements, $\lVert\boldsymbol\Delta\rVert=1.078$ and $1.045$. However, the smallest eigenvalue of $\mathbf S$ falls from 1.371 to 0.306 and the directional leverage $\boldsymbol\Delta^{\mathsf T}\mathbf S^{-1}\boldsymbol\Delta$ rises from 0.165 to 1.709, so the penalty (10) is 0.502 for the $C_u$-selected design against 0.021 for the stage-aware design. The pooled criterion credits a displacement lying along a weakly informed direction of $\mathbf S$; once $\delta$ is fitted, that information is lost. At the boundary $n_2-1=q$ every follow-up direction is needed for estimability, which makes such misplacement costly, although the boundary does not by itself force a large penalty. <a href="#explorer" data-load="10,4,4|Cu_pooled">Load the $C_u$-selected design in the explorer</a> and compare it with <a href="#explorer" data-load="10,4,4|C_aware">the stage-aware design</a>.</p>
 
 <h3>5.5. Projection ranks, bounds and distance constraints</h3>
-<p>Theorem 1 matters because rank deficiency is common for four-factor projections. Over conference-matrix designs with $m=5,\dots,14$, no four-factor projection supports the full quadratic model when $m\le10$; the full-rank proportions are 110/330 and 165/495 for $m=11,12$ and 520/715 and 728/1001 for $m=13,14$, whereas every three-factor projection has full rank (Supplementary Table S6; see also Jones and Nachtsheim, 2011).</p>
+<p>Theorem 1 matters because rank deficiency is common for four-factor projections. Over conference-matrix designs with $m=5,\dots,14$, no four-factor projection supports the full quadratic model when $m\le10$; the full-rank proportions are 110/330 and 165/495 for $m=11,12$ and 520/715 and 728/1001 for $m=13,14$, whereas every three-factor projection has full rank (Supplementary Table S6; see also Jones and Nachtsheim, 2011). In agricultural terms: if a screen of up to ten inputs points to four of them, the follow-up season can never be skipped, and Theorem 1 says how many plots it needs at minimum.</p>
 
 <section class="widget" id="rankaudit">
   <h4>Exhaustive projection-rank audit</h4>
-  <p class="sub">Builds each conference-matrix DSD for $m=5,\dots,14$ and computes $\operatorname{rank}(\mathbf F_1)$ for every three- and four-factor projection (3,300 projections in total), with the minimum follow-up size $q+1$ from Theorem 1.</p>
-  <button id="runAudit" class="pri">Run audit in browser</button>
+  <p class="sub">Builds each conference-matrix DSD for $m=5,\dots,14$ and computes $\operatorname{rank}(\mathbf F_1)$ for every three- and four-factor projection (4,362 projections in total), with the minimum follow-up size $q+1$ from Theorem 1.</p>
+  <button id="runAudit" class="pri" type="button">Run audit in browser</button>
   <div class="tscroll" id="auditOut"></div>
 </section>
 
@@ -279,24 +603,26 @@ $$\Psi^*_{\rm exact}\;\ge\;\inf_\nu\Psi(\nu)\;\ge\;\Psi(\pi)-n_2\Big\{\sup_{\mat
 <p>Because $r_1=p=10$, Theorem 1 imposes no minimum, but a single follow-up run is useless. Figure 1 shows the best-found $\Psi$ against $n_2$. With $d_{\min}=3$, the tolerance $\varepsilon=0.40$ is first met with three runs; a 40% reduction from $\Psi(0)=0.6237$ ($\varepsilon=0.3742$) requires four; and a root-mean-square prediction standard error of $0.70\sigma$ ($\varepsilon=0.49-1/13=0.4131$) requires three. For the four-factor projection $(8,4)$, where Theorem 1 requires $n_2\ge3$, the tolerance $\varepsilon=0.50$ is first met at $n_2=6$. These decisions rest on best-found designs and are not proofs of minimal run count.</p>
 
 <section class="widget" id="fig1">
-  <h4>Fig. 1 (interactive): run-count planning rule</h4>
-  <p class="sub">Best-found excess integrated variance $\Psi$ against the number of follow-up runs for the three-factor projection of the six-factor design ($n_1=13$, solid) and the four-factor projection of the eight-factor design ($n_1=17$, dashed), 200 stage-aware starts per point. Move the tolerance to apply the rule of Section 3.</p>
+  <h4>Fig. 1 · How many second-season plots?</h4>
+  <p class="sub">Best-found excess integrated variance $\Psi$ against the number of follow-up runs for the three-factor projection of the six-factor design (tissue culture, $n_1=13$, solid) and the four-factor projection of the eight-factor design (rice nutrients, $n_1=17$, dashed), 200 stage-aware starts per point. Move the tolerance to apply the rule of Section 3.</p>
   <div class="ctl">
-    <label for="eps">tolerance ε</label><input id="eps" type="range" min="0.28" max="0.72" step="0.0001" value="0.40" style="width:200px"><span id="epsv" style="font-family:ui-monospace,monospace"></span>
+    <label for="eps">tolerance ε</label><input id="eps" type="range" min="0.28" max="0.72" step="0.0001" value="0.40" style="width:200px;max-width:100%"><span id="epsv" style="font-family:var(--f-mono)"></span>
     <label for="dmin">d<sub>min</sub></label><input id="dmin" type="number" min="0" max="10" value="3" style="width:56px">
   </div>
   <div class="ctl">
     <span class="note">presets:</span>
-    <button data-eps="0.40">ε = 0.40</button>
-    <button data-eps="0.3742">40% reduction (0.3742)</button>
-    <button data-eps="0.4131">RMS SE 0.70σ (0.4131)</button>
-    <button data-eps="0.50">ε = 0.50</button>
+    <button type="button" data-eps="0.40">ε = 0.40</button>
+    <button type="button" data-eps="0.3742">40% reduction (0.3742)</button>
+    <button type="button" data-eps="0.4131">RMS SE 0.70σ (0.4131)</button>
+    <button type="button" data-eps="0.50">ε = 0.50</button>
   </div>
   <svg id="fig1svg" viewBox="0 0 560 300" role="img" aria-label="Best-found Psi against number of follow-up runs"></svg>
-  <p class="decision" id="decision"></p>
+  <p class="decision" id="decision" aria-live="polite"></p>
 </section>
 
-<p>Table 3 lists the four selected runs for each target and Fig. 2 shows them with the screening design. The baseline design uses two opposite corners and two centre runs, so contrasting corners with the centre informs the pure quadratic terms; the contrast design spreads its runs over three points near edge midpoints and one corner. The stored baseline design has two <em>near</em>-centre runs, with all coordinates within $5\times10^{-5}$ of zero. Replacing them by exact centre runs changes $\Psi$ by less than $6\times10^{-11}$, reduces the rank of the centred Stage 2 scatter from three to two (the third direction carried almost no information), and yields one pure-error degree of freedom; we recommend the exact-centre version. The contrast design reduces $C$ by 12.8% but increases $\Psi$ by 17.6%. On the response scale, with an illustrative $\hat\sigma=1.25$, the root-mean-square standard error of baseline prediction, $\hat\sigma(1/n_1+\Psi)^{1/2}$, is about 0.82 for the stage-aware design and 0.99 for the design ranked first by $I_u$.</p>
+<p>Table 3 lists the four selected runs for each target and Fig. 2 shows them with the screening design. The baseline design uses two opposite corners and two centre runs, so contrasting corners with the centre informs the pure quadratic terms; the contrast design spreads its runs over three points near edge midpoints and one corner. The stored baseline design has two <em>near</em>-centre runs, with all coordinates within $5\times10^{-5}$ of zero. Replacing them by exact centre runs changes $\Psi$ by less than $6\times10^{-11}$, reduces the rank of the centred Stage 2 scatter from three to two (the third direction carried almost no information), and yields one pure-error degree of freedom; we recommend the exact-centre version. The contrast design reduces $C$ by 12.8% but increases $\Psi$ by 17.6%. On the response scale, with an illustrative $\hat\sigma=1.25$ shoots per explant, the root-mean-square standard error of baseline prediction, $\hat\sigma(1/n_1+\Psi)^{1/2}$, is about 0.82 for the stage-aware design and 0.99 for the design ranked first by $I_u$.</p>
+<div class="field"><p class="eyebrow">Field note: reading the plan</p>
+<p>The prediction-oriented batch 2 is easy to prepare: one vessel set at the richest medium (35 g/L sucrose, 1.75 mg/L BAP, 0.55 mg/L NAA), one at the leanest, and two at the standard medium. The two identical centre cultures also give a direct estimate of culture-to-culture error. Reaching the same precision with the stage-naive plan would need roughly $(0.99/0.82)^2\approx1.46$ times as many cultures.</p></div>
 <p class="cap"><b>Table 3</b> Four-run follow-up batches for the tissue-culture illustration, in coded and natural units (sucrose, g/L; BAP and NAA, mg/L). Coordinates are rounded to three decimals. <a href="#explorer" data-load="6,3,4|psi_exact">Open the baseline design</a> · <a href="#explorer" data-load="6,3,4|C_aware">open the contrast design</a>.</p>
 <div class="tscroll"><table class="t">
 <tr><th>Run</th><th>Target</th><th>$x_1$</th><th>$x_2$</th><th>$x_3$</th><th>Sucrose</th><th>BAP</th><th>NAA</th></tr>
@@ -309,11 +635,28 @@ $$\Psi^*_{\rm exact}\;\ge\;\inf_\nu\Psi(\nu)\;\ge\;\Psi(\pi)-n_2\Big\{\sup_{\mat
 <tr><td>3</td><td>Contrast ($C$)</td><td>−1</td><td>−1</td><td>−1</td><td>15.0</td><td>0.25</td><td>0.05</td></tr>
 <tr><td>4</td><td>Contrast ($C$)</td><td>−1</td><td>−0.005</td><td>1</td><td>15.0</td><td>1.00</td><td>0.55</td></tr>
 </table></div>
-<p class="note">Fig. 2 of the manuscript (the two designs plotted with the projected screening design) is reproduced by the explorer above: choose the (6,3,4) scenario and switch the plotted axes.</p>
 
-<h2>7. Discussion</h2>
-<p>The results show that the criterion used to select follow-up runs should match both the analysis that will be fitted and the quantity to be estimated. Ranking candidates by an unblocked criterion and fitting the stage effect afterwards can select a design that is much worse under that analysis; Propositions 2 and 3 identify the terms responsible. In the full-rank scenario most of the loss came from the ranking criterion rather than from the candidates the search produced: re-ranking the same naive pool by $\Psi$ recovered 28.5 of the 35.4 percentage points. Using the stage-adjusted criterion in the search is therefore the main remedy, not more search effort. A design chosen for absolute prediction is not automatically good for comparing settings, and conversely; locating a response optimum would require yet another criterion. In practice we suggest choosing the target ($\Psi$ or $C$) first, computing $q$ and applying Theorem 1, using the run-count rule of Section 3, and inspecting $h$ and $\boldsymbol\Delta^{\mathsf T}\mathbf S^{-1}\boldsymbol\Delta$ for the selected design.</p>
+<figure class="wide" id="fig2">
+<svg id="fig2svg" viewBox="0 0 780 520" role="img" aria-label="Pairwise projections of the screening design with the baseline and contrast follow-up designs"></svg>
+<figcaption class="cap"><b>Fig. 2</b> The 13-run screening design (blue rings, number = runs stacked at that point) and the two four-run follow-up batches (amber, numbered as in Table 3), in all three two-factor projections. Top row: baseline design ($\Psi$). Bottom row: contrast design ($C$). The factor not shown is ignored in each panel.</figcaption>
+</figure>
+
+<h2 id="checklist">7. A checklist for planning the follow-up stage</h2>
+<p>The results reduce to a short sequence that can be carried out with the R or Python packages, or in the explorer above.</p>
+<ol class="steps">
+<li><b>Fix the question.</b> Decide whether the follow-up should support prediction of the response ($\Psi$), comparison of settings ($C$), or both. When both matter, report both criteria for the candidate designs.</li>
+<li><b>Fix the region.</b> Set dose ranges and any safety or cost limits for the active factors. Hold the inactive factors at their middle level in Stage 2.</li>
+<li><b>Compute $q$.</b> Find the rank deficiency of the projected screening design. Theorem 1 then gives the minimum $n_2 = q+1$, and $n_2=1$ is never useful.</li>
+<li><b>Choose $n_2$.</b> Apply the run-count rule of Section 3 with your required residual degrees of freedom and tolerance (Fig. 1).</li>
+<li><b>Place the runs with the stage effect in the criterion.</b> Run coordinate exchange on $\Psi$ or $C$, never on $I_u$ or $C_u$, with many random starts.</li>
+<li><b>Check the diagnostics.</b> Confirm full rank, a confounding index $h$ well below 1, and a small directional leverage $\boldsymbol\Delta^{\mathsf T}\mathbf S^{-1}\boldsymbol\Delta$. Compare with the lower bound to see how much could still be gained.</li>
+<li><b>Make it practical.</b> Round near-centre or near-edge coordinates to exact levels when this costs essentially nothing (Section 6), convert to natural units, and randomise the order of the Stage 2 runs before planting or culturing.</li>
+</ol>
+
+<h2>8. Discussion</h2>
+<p>The results show that the criterion used to select follow-up runs should match both the analysis that will be fitted and the quantity to be estimated. Ranking candidates by an unblocked criterion and fitting the stage effect afterwards can select a design that is much worse under that analysis; Propositions 2 and 3 identify the terms responsible. In the full-rank scenario most of the loss came from the ranking criterion rather than from the candidates the search produced: re-ranking the same naive pool by $\Psi$ recovered 28.5 of the 35.4 percentage points. Using the stage-adjusted criterion in the search is therefore the main remedy, not more search effort. A design chosen for absolute prediction is not automatically good for comparing settings, and conversely; locating a response optimum would require yet another criterion.</p>
 <p>The results are conditional on the selected active factors. Holding omitted factors at their centre in Stage 2 removes their interactions with active factors within that stage but cannot remove omitted-variable bias from Stage 1 or recover a factor wrongly declared inactive. Stage-specific slopes, heteroscedastic errors or a constrained region would change $\mathbf M_a$ and the candidate set; for a spherical region $\lVert\mathbf x\rVert^2\le c$, corners are excluded only if $c&lt;k$. Treating the stage effect as random (Goos and Vandebroek, 2001) gives a family of criteria with the pooled and fixed-effect criteria as limiting cases and is a natural extension, as is extending Theorem 1 to several follow-up batches.</p>
+<p>Two features of agricultural experiments need particular care. First, season-by-treatment interaction is common: the nitrogen response of a cereal can differ between a wet and a dry season. Model (1) assumes a pure shift, so when such interaction is plausible the follow-up should leave enough residual degrees of freedom to test stage-by-linear-term interactions, and the conclusions should be stated for the shifted-surface model. Second, field trials are rarely completely randomised within a stage. Replicate blocks or spatial trends within a season add further nuisance parameters that change $\mathbf S$; the criteria extend by profiling these effects in the same way as $\delta$, but the numerical results here do not cover that case.</p>
 <p>The numerical evidence has clear limits. It covers three active subsets chosen during development; the searches are local with finite budgets, so best-found values are not certified optima; there is no matched reproduction of the axial augmentation of Liu et al. (2023), whose objective does not include an unrestricted stage shift; robustness to model misspecification was not studied by simulation; and the Bernstein bound is numerical rather than interval-certified. A broader study over many projections with independent seeds would strengthen the empirical conclusions.</p>
 
 <h2>Appendix A. Proofs</h2>
@@ -334,6 +677,21 @@ $$\Psi^*_{\rm exact}\;\ge\;\inf_\nu\Psi(\nu)\;\ge\;\Psi(\pi)-n_2\Big\{\sup_{\mat
 $$\operatorname{Cov}_{\pi_\theta}(\mathbf z)=(1-\theta)\operatorname{Cov}_\pi(\mathbf z)+\theta\operatorname{Cov}_\nu(\mathbf z)+\theta(1-\theta)(\mathrm E_\pi\mathbf z-\mathrm E_\nu\mathbf z)(\mathrm E_\pi\mathbf z-\mathrm E_\nu\mathbf z)^{\mathsf T},$$
 so $\mathbf S(\pi_\theta)\succeq(1-\theta)\mathbf S(\pi)+\theta\mathbf S(\nu)$. If $\mathbf S(\pi)$ and $\mathbf S(\nu)$ are positive definite, the order-reversing property of the inverse and operator convexity of $\mathbf A\mapsto\mathbf A^{-1}$ on positive definite matrices (Bhatia, 1997) give $\mathbf S(\pi_\theta)^{-1}\preceq(1-\theta)\mathbf S(\pi)^{-1}+\theta\mathbf S(\nu)^{-1}$; multiplying by $\mathbf Q^{1/2}$ on both sides and taking traces shows that $\Psi$ is convex, and the inequality is trivial if either value is infinite. Differentiating at $\theta=0$, $\partial\mathbf S(\pi_\theta)/\partial\theta=n_2[\mathrm E_\nu\{(\mathbf z-\mathrm E_\pi\mathbf z)(\mathbf z-\mathrm E_\pi\mathbf z)^{\mathsf T}\}-\operatorname{Cov}_\pi(\mathbf z)]$, so the directional derivative of $\Psi$ at $\pi$ towards $\nu$ is $-n_2\{\mathrm E_\nu d_\pi-\mathrm E_\pi d_\pi\}\ge-n_2\{\sup_{\mathbf x}d_\pi(\mathbf x)-\mathrm E_\pi d_\pi\}$. By convexity, $\Psi(\nu)\ge\Psi(\pi)$ plus this derivative for every $\nu$, which gives the second inequality in (14); the first holds because exact designs correspond to empirical measures. $\square$</p></details>
 
+<h2>Appendix B. Glossary for applied readers</h2>
+<div class="tscroll"><table class="t wrap">
+<tr><th>Term</th><th>Meaning in this paper</th><th>Agricultural example</th></tr>
+<tr><td>Factor, coded level</td><td>An input varied in the experiment, scaled so its range is −1 to +1</td><td>Nitrogen 0–150 kg/ha coded as −1 to +1, with 75 kg/ha at 0</td></tr>
+<tr><td>Run</td><td>One experimental unit at one factor combination</td><td>A plot, a pot, a culture vessel, a seed lot</td></tr>
+<tr><td>Definitive screening design (DSD)</td><td>A 2m+1 run, three-level design for screening m factors</td><td>13 plots screening 6 agronomic practices</td></tr>
+<tr><td>Stage, stage shift δ</td><td>A batch of runs done together; δ is the unknown level difference between batches</td><td>Season, year, culture batch, greenhouse batch</td></tr>
+<tr><td>Ψ (excess prediction variance)</td><td>Average uncertainty of a predicted response over the region, beyond the unavoidable 1/n₁</td><td>How precisely yield is predicted for any recommended dose combination</td></tr>
+<tr><td>C (contrast variance)</td><td>Average uncertainty of the difference between two settings</td><td>How precisely "dose A beats dose B" is estimated</td></tr>
+<tr><td>I<sub>u</sub>, C<sub>u</sub> (naive, pooled)</td><td>The same criteria computed as if there were no stage effect</td><td>Planning as if both seasons were identical</td></tr>
+<tr><td>h (stage-confounding index)</td><td>Between 0 and 1; near 1 means stage and factor effects are entangled</td><td>All Season 2 plots at high doses</td></tr>
+<tr><td>Rank deficiency q</td><td>Number of model directions the screening design cannot estimate</td><td>Curvature or interaction terms the screen could not separate</td></tr>
+<tr><td>Residual degrees of freedom</td><td>Runs left over to estimate error after fitting the model</td><td>Needed for F-tests and confidence intervals</td></tr>
+</table></div>
+
 <h2>Code and data availability</h2>
 <p>No experimental response data were generated or analysed. The <a href="https://github.com/lunganlungpg/stage-aware-dsd-followup">repository</a> contains the coordinates of every selected design, a Python package (<code>python/stageaware</code>) and an R package (<code>R/stageaware</code>) implementing all criteria, diagnostics, the rank-two coordinate exchange and the lower bounds, with tests that reproduce Tables 1–2, Section 5.4 and Section 5.5 from the stored designs.</p>
 <pre># Python
@@ -345,14 +703,14 @@ remotes::install_github("lunganlungpg/stage-aware-dsd-followup", subdir = "R/sta
 library(stageaware); P &lt;- followup_problem(dsd(6)[, 1:3]); coordinate_exchange(P, 4, "psi", n_starts = 10)$value</pre>
 
 <h2 id="cite">How to cite</h2>
-<pre>@misc{lunganlung2026stageaware,
+<div class="citebox"><button type="button" id="copyBib">Copy BibTeX</button><pre id="bibtex">@misc{lunganlung2026stageaware,
   title  = {Stage-aware follow-up designs for definitive screening experiments:
             exact criteria, rank completion and pooled-criterion bias},
-  author = {Lunganlung P G and Verma, Prabhakar},
+  author = {{Lunganlung P. G.} and Verma, Prabhakar},
   year   = {2026},
-  note   = {Preprint},
+  note   = {Preprint, version 2},
   url    = {https://github.com/lunganlungpg/stage-aware-dsd-followup}
-}</pre>
+}</pre></div>
 
 <h2>References</h2>
 <div class="refs">
@@ -379,8 +737,12 @@ library(stageaware); P &lt;- followup_problem(dsd(6)[, 1:3]); coordinate_exchang
 <p>Virtanen, P., Gommers, R., Oliphant, T.E., et al., 2020. SciPy 1.0: fundamental algorithms for scientific computing in Python. Nat. Methods 17, 261–272. <a href="https://doi.org/10.1038/s41592-019-0686-2">doi:10.1038/s41592-019-0686-2</a></p>
 <p>Xiao, L., Lin, D.K.J., Bai, F., 2012. Constructing definitive screening designs using conference matrices. J. Qual. Technol. 44, 2–8. <a href="https://doi.org/10.1080/00224065.2012.11917877">doi:10.1080/00224065.2012.11917877</a></p>
 </div>
+<details><summary>Changes in version 2</summary>
+<p>Added the plain-language summary, highlights, Fig. 0, Table 0, field notes, the season-shift simulator, Fig. 2 and Fig. 3, the practitioner checklist (Section 7), agricultural discussion of season-by-treatment interaction and within-season blocking (Section 8), and the glossary (Appendix B). Corrected the projection count in the rank audit from 3,300 to 4,362, and the MSC secondary-class order. Redesigned the page with a masthead, key results, a contents rail, tabbed summaries, an illustrated Fig. 0 and a print stylesheet. No theoretical result or reported number has changed.</p>
+</details>
 <footer>Preprint. This version has not been peer reviewed. Code released under the MIT licence; text © the authors.</footer>
 </main>
+</div>
 
 <script>
 "use strict";
@@ -404,6 +766,15 @@ const DESIGNS = {
   Cu_pooled: [[1,1,1,-1],[-1,0.2670162536391701,0.2670162402966011,1],[0.2670162099357006,-1,0.26701622023012656,1],[0.26701621925921426,0.26701623365496036,-1,1]]}
 };
 const PRESET_LABEL = {psi_aware:"Ψ-aware (Table 1)", psi_exact:"Ψ-aware, exact centre runs (Table 3)", Iu_naive:"I_u-naive selected (Table 1)", C_aware:"C-aware (Table 2)", Cu_pooled:"C_u-pooled selected (Table 2)", random:"Random runs", thm1:"Theorem 1 construction (q+1 runs)"};
+/* agricultural reading of each scenario: [name, unit, low, high] per active factor */
+const CTX = {
+ "6,3,4": {title:"Shoot-regeneration medium (plant tissue culture)", s1:"first culture batch, 13 cultures", s2:"second culture batch",
+   f:[["Sucrose","g/L",15,35],["BAP","mg/L",0.25,1.75],["NAA","mg/L",0.05,0.55]]},
+ "8,4,6": {title:"Rice nutrient-management trial", s1:"kharif (wet season) screen of 8 practices, 17 plots", s2:"rabi (dry season) follow-up",
+   f:[["Nitrogen","kg N/ha",0,150],["Phosphorus","kg P₂O₅/ha",0,80],["Potassium","kg K₂O/ha",0,80],["Zinc sulphate","kg/ha",0,25]]},
+ "10,4,4": {title:"Seed-priming trial in the greenhouse", s1:"first greenhouse batch, 10 treatments, 21 trays", s2:"second greenhouse batch",
+   f:[["GA₃","ppm",0,100],["KNO₃","%",0,2],["Priming time","h",6,24],["Incubation temp.","°C",15,35]]}
+};
 const TRAJ = [
  {m:6,n2:0,df:3,psi:0.6237435897435898},{m:6,n2:2,df:4,psi:0.4176561150935527},{m:6,n2:3,df:5,psi:0.37874821937654063},{m:6,n2:4,df:6,psi:0.3566478990525325},{m:6,n2:5,df:7,psi:0.33435708241109513},{m:6,n2:6,df:8,psi:0.31041570670110574},
  {m:8,n2:0,df:2,psi:Infinity},{m:8,n2:2,df:3,psi:Infinity},{m:8,n2:3,df:4,psi:0.7050353138341607},{m:8,n2:4,df:5,psi:0.5785351831716332},{m:8,n2:5,df:6,psi:0.5083372208786456},{m:8,n2:6,df:7,psi:0.45384002028636194}];
@@ -420,12 +791,12 @@ function spdInv(A){ // Cholesky inverse; null if not numerically positive defini
   const tol=1e-10*Math.max(1,mx);
   for(let j=0;j<n;j++){let s=A[j][j];for(let k=0;k<j;k++)s-=L[j][k]*L[j][k];if(!(s>tol))return null;L[j][j]=Math.sqrt(s);
     for(let i=j+1;i<n;i++){let t=A[i][j];for(let k=0;k<j;k++)t-=L[i][k]*L[j][k];L[i][j]=t/L[j][j];}}
-  const Li=zeros(n,n); // inverse of L
+  const Li=zeros(n,n);
   for(let i=0;i<n;i++){Li[i][i]=1/L[i][i];for(let j=0;j<i;j++){let s=0;for(let k=j;k<i;k++)s-=L[i][k]*Li[k][j];Li[i][j]=s/L[i][i];}}
   const R=zeros(n,n); for(let i=0;i<n;i++)for(let j=0;j<=i;j++){let s=0;for(let k=i;k<n;k++)s+=Li[k][i]*Li[k][j];R[i][j]=s;R[j][i]=s;}
   return R;
 }
-function rankOf(A0){ // Gaussian elimination with partial pivoting
+function rankOf(A0){
   const A=copyM(A0), r=A.length, c=A[0].length; let mx=0; for(const row of A)for(const v of row)mx=Math.max(mx,Math.abs(v));
   const tol=1e-9*Math.max(1,mx); let rank=0;
   for(let col=0;col<c&&rank<r;col++){let p=rank;for(let i=rank+1;i<r;i++)if(Math.abs(A[i][col])>Math.abs(A[p][col]))p=i;
@@ -433,7 +804,7 @@ function rankOf(A0){ // Gaussian elimination with partial pivoting
     for(let i=rank+1;i<r;i++){const f=A[i][col]/A[rank][col];if(f)for(let j=col;j<c;j++)A[i][j]-=f*A[rank][j];}rank++;}
   return rank;
 }
-function eigMin(A0){ // cyclic Jacobi, smallest eigenvalue of a symmetric matrix
+function eigMin(A0){
   const A=copyM(A0), n=A.length;
   for(let sweep=0;sweep<60;sweep++){let off=0;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)off+=A[i][j]*A[i][j];if(off<1e-22)break;
     for(let p=0;p<n;p++)for(let q=p+1;q<n;q++){if(Math.abs(A[p][q])<1e-300)continue;
@@ -524,26 +895,34 @@ async function exchange(P,n2,crit,starts,report){
   return {X:best,v:bestV,all};
 }
 
-/* ===================== explorer UI ===================== */
+/* ===================== helpers ===================== */
 const $=id=>document.getElementById(id);
 const fmt=(v,d=4)=>v===Infinity?"∞ (singular)":Number.isNaN(v)||v===undefined?"—":v.toFixed(d);
+const heatRGB=()=>getComputedStyle(document.documentElement).getPropertyValue("--heat").trim();
+const toNat=(spec,v)=>spec[2]+(v+1)/2*(spec[3]-spec[2]);
+const natFmt=(spec,v)=>{const x=toNat(spec,v),r=spec[3]-spec[2];return x.toFixed(r>=20?0:r>=2?1:2)};
+
+/* ===================== explorer UI ===================== */
 let P=null, X2=[], scenKey="6,3,4", axX=0, axY=1, busy=false;
+const ctx=()=>CTX[scenKey]||null;
 
 function setScenario(m,active,n2,key){
   P=makeProblem(m,active); scenKey=key;
   const ps=$("preset"); ps.innerHTML="";
   const keys=DESIGNS[key]?Object.keys(DESIGNS[key]):[];
   [...keys,"random","thm1"].forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=PRESET_LABEL[k];ps.appendChild(o)});
-  [ $("ax"),$("ay")].forEach((s,w)=>{s.innerHTML="";active.forEach((a,i)=>{const o=document.createElement("option");o.value=i;o.textContent=axisName(i);s.appendChild(o)});s.value=w});
+  [$("ax"),$("ay")].forEach((s,w)=>{s.innerHTML="";active.forEach((a,i)=>{const o=document.createElement("option");o.value=i;o.textContent=axisName(i);s.appendChild(o)});s.value=Math.min(w,P.k-1)});
   axX=0;axY=Math.min(1,P.k-1);
   X2=keys.length?DESIGNS[key][keys[0]].map(r=>r.slice()):randomDesign(n2);
   if(!keys.length)ps.value="random";
+  const c=ctx();
+  $("ctxline").innerHTML=c?`<b>${c.title}.</b> Stage 1: ${c.s1}. Stage 2: ${c.s2}. Active factors: ${c.f.map(f=>`${f[0]} ${f[2]}–${f[3]} ${f[1]}`).join(", ")}.`
+    :`Custom projection of the ${m}-factor screening design onto factors ${active.join(", ")} (coded units).`;
   render();
 }
-function axisName(i){ if(scenKey==="6,3,4")return ["x₁ sucrose","x₂ BAP","x₃ NAA"][i]; return "x"+(P?P.active[i]:i+1) }
+function axisName(i){const c=ctx(); return c?`x${i+1} ${c.f[i][0]}`:"x"+(P?P.active[i]:i+1)}
 function randomDesign(n2){return Array.from({length:n2},()=>Array.from({length:P.k},()=>+(2*Math.random()-1).toFixed(3)))}
-function thm1Design(n2){ // any Stage 1 point + q random points (generic position), padded to n2
-  const n=Math.max(n2,P.q+1), X=[P.X1[0].slice()];
+function thm1Design(n2){const n=Math.max(n2,P.q+1), X=[P.X1[0].slice()];
   while(X.length<n)X.push(Array.from({length:P.k},()=>+(2*Math.random()-1).toFixed(3)));return X}
 function loadPreset(name){
   const n2=X2.length||4;
@@ -551,21 +930,20 @@ function loadPreset(name){
   else X2=DESIGNS[scenKey][name].map(r=>r.slice());
   render();
 }
-
 function render(){ drawPlot(); drawMetrics(); drawCoords(); }
 
 function drawMetrics(){
   const e=evaluate(P,X2), full=e.rank===P.p;
   const cells=[
-    ["Ψ  excess integrated variance (5)",fmt(e.psi),true],
-    ["C  pairwise-contrast variance (6)",fmt(e.C),true],
+    ["Ψ excess prediction variance (5)",fmt(e.psi),true],
+    ["C comparison variance (6)",fmt(e.C),true],
     ["Φ_I = 1/n₁ + Ψ",fmt(e.phi)],
-    ["I_u  unblocked criterion",fmt(e.Iu)],
-    ["h  stage confounding (7)",fmt(e.h,3)],
-    ["C_u  pooled contrast",fmt(e.Cu)],
-    ["C − C_u  pooled overstatement (10)",fmt(e.gap,3)],
-    ["Δ′S⁻¹Δ  directional leverage",fmt(e.lev,3)],
-    ["‖Δ‖  stage-mean displacement",fmt(e.normD,3)],
+    ["I_u naive criterion",fmt(e.Iu)],
+    ["h stage confounding (7)",fmt(e.h,3)],
+    ["C_u pooled contrast",fmt(e.Cu)],
+    ["C − C_u false credit (10)",fmt(e.gap,3)],
+    ["Δ′S⁻¹Δ directional leverage",fmt(e.lev,3)],
+    ["‖Δ‖ stage-mean displacement",fmt(e.normD,3)],
     ["min eigenvalue of S",fmt(e.minEig,3)],
     ["rank(M_a) / p",`${e.rank} / ${P.p}`],
     ["residual df",String(e.df)],
@@ -573,42 +951,42 @@ function drawMetrics(){
   $("metrics").innerHTML=cells.map(([k,v,hi])=>`<div class="m${hi?" hi":""}"><div class="k">${k}</div><div class="v">${v}</div></div>`).join("");
   const need=P.q?P.q+1:2;
   let msg=`Projection: m = ${P.m}, active {${P.active.join(",")}}, n₁ = ${P.n1}, r₁ = ${P.r1}, q = ${P.q}. Theorem 1: at least ${P.q?P.q+1:"2 (n₂ = 1 adds nothing)"} follow-up runs. `;
-  msg+= full?`<span class="good">Full rank with n₂ = ${X2.length}.</span>`:`<span class="warn">Not estimable: rank(M_a) = ${e.rank} &lt; p = ${P.p}${X2.length<need?` — n₂ = ${X2.length} is below the Theorem 1 minimum of ${need}`:""}.</span>`;
-  if(scenKey==="6,3,4"&&isFinite(e.psi))msg+=` RMS prediction SE at σ̂ = 1.25: ${(1.25*Math.sqrt(e.phi)).toFixed(3)}.`;
+  msg+= full?`<span class="good">Full rank with n₂ = ${X2.length}.</span>`:`<span class="warn">Not estimable: rank(M_a) = ${e.rank} &lt; p = ${P.p}${X2.length<need?`. n₂ = ${X2.length} is below the Theorem 1 minimum of ${need}`:""}.</span>`;
+  if(scenKey==="6,3,4"&&isFinite(e.psi))msg+=` RMS prediction SE at σ̂ = 1.25 shoots/explant: ${(1.25*Math.sqrt(e.phi)).toFixed(3)}.`;
   $("verdict").innerHTML=msg;
 }
 
-function natural(i,v){const r=[[15,35],[0.25,1.75],[0.05,0.55]][i];return r[0]+(v+1)/2*(r[1]-r[0])}
 function drawCoords(){
-  const tb=$("coords"), nat=scenKey==="6,3,4";
-  let h=`<tr><th>run</th>${P.active.map((a,i)=>`<th>${axisName(i)}</th>`).join("")}${nat?"<th>sucrose g/L</th><th>BAP mg/L</th><th>NAA mg/L</th>":""}<th></th></tr>`;
-  X2.forEach((r,i)=>{h+=`<tr><td>${i+1}</td>${r.map((v,j)=>`<td><input type="number" min="-1" max="1" step="0.05" value="${+v.toFixed(3)}" data-i="${i}" data-j="${j}" aria-label="run ${i+1} ${axisName(j)}"></td>`).join("")}${nat?r.map((v,j)=>`<td>${natural(j,v).toFixed(2)}</td>`).join(""):""}<td><button data-del="${i}" aria-label="remove run ${i+1}">✕</button></td></tr>`});
-  h+=`<tr><td colspan="${P.k+(nat?5:2)}"><button id="addrun">+ add run</button></td></tr>`;
+  const tb=$("coords"), c=ctx();
+  let h=`<tr><th>run</th>${P.active.map((a,i)=>`<th>x${i+1}</th>`).join("")}${c?c.f.map(f=>`<th>${f[0]}<br>${f[1]}</th>`).join(""):""}<th></th></tr>`;
+  X2.forEach((r,i)=>{h+=`<tr><td>${i+1}</td>${r.map((v,j)=>`<td><input type="number" min="-1" max="1" step="0.05" value="${+v.toFixed(3)}" id="cx-${i}-${j}" data-i="${i}" data-j="${j}" aria-label="run ${i+1} ${axisName(j)} coded"></td>`).join("")}${c?r.map((v,j)=>`<td class="nat">${natFmt(c.f[j],v)}</td>`).join(""):""}<td><button type="button" data-del="${i}" aria-label="remove run ${i+1}">✕</button></td></tr>`});
+  h+=`<tr><td colspan="${1+P.k+(c?P.k:0)+1}" style="text-align:left"><button type="button" id="addrun">+ add run</button></td></tr>`;
   tb.innerHTML=h;
-  tb.querySelectorAll("input").forEach(inp=>inp.addEventListener("change",e=>{const i=+inp.dataset.i,j=+inp.dataset.j;let v=parseFloat(inp.value);if(!isFinite(v))v=0;X2[i][j]=Math.max(-1,Math.min(1,v));drawPlot();drawMetrics();drawCoords()}));
+  tb.querySelectorAll("input").forEach(inp=>inp.addEventListener("change",()=>{const i=+inp.dataset.i,j=+inp.dataset.j;let v=parseFloat(inp.value);if(!isFinite(v))v=0;X2[i][j]=Math.max(-1,Math.min(1,v));render()}));
   tb.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{if(X2.length>1){X2.splice(+b.dataset.del,1);render()}}));
   $("addrun").addEventListener("click",()=>{X2.push(new Array(P.k).fill(0));render()});
 }
 
-const PAD=30, W=340, SC=(W-2*PAD)/2;
+const PAD=34, W=340, SC=(W-2*PAD)/2;
 const sx=v=>PAD+(v+1)*SC, sy=v=>W-PAD-(v+1)*SC;
 function drawPlot(){
-  const svg=$("plot"), css=getComputedStyle(document.documentElement), heat=css.getPropertyValue("--heat").trim();
-  let g="";
-  // heat map of prediction variance on the slice
+  const svg=$("plot"), heat=heatRGB(), c=ctx(); let g="";
   const Si=spdInv(Swithin(P,X2)), N=28;
   if(Si){const vals=[];let lo=Infinity,hi=-Infinity;
     for(let a=0;a<N;a++)for(let b=0;b<N;b++){const x=new Array(P.k).fill(0);x[axX]=-1+(a+.5)*2/N;x[axY]=-1+(b+.5)*2/N;
       const d=zrow(x).map((v,i)=>v-P.zbar1[i]);const v=1/P.n1+dot(d,matVec(Si,d));vals.push([a,b,v]);lo=Math.min(lo,v);hi=Math.max(hi,v)}
-    const cw=2*SC/N;for(const [a,b,v] of vals){const o=hi>lo?0.05+0.5*(v-lo)/(hi-lo):0.1;g+=`<rect x="${PAD+a*cw}" y="${W-PAD-(b+1)*cw}" width="${cw+.4}" height="${cw+.4}" fill="rgba(${heat},${o.toFixed(3)})"/>`}
-    g+=`<text x="${W-PAD}" y="${PAD-10}" text-anchor="end" font-size="10" fill="currentColor" opacity=".7">Var range ${lo.toFixed(2)}–${hi.toFixed(2)} σ²</text>`;
-  }
-  g+=`<rect x="${PAD}" y="${PAD}" width="${2*SC}" height="${2*SC}" fill="none" stroke="currentColor" stroke-opacity=".35"/>`;
-  for(const t of [-1,0,1]){g+=`<text x="${sx(t)}" y="${W-PAD+14}" text-anchor="middle" font-size="10" fill="currentColor">${t}</text><text x="${PAD-6}" y="${sy(t)+3}" text-anchor="end" font-size="10" fill="currentColor">${t}</text>`}
-  g+=`<text x="${W/2}" y="${W-4}" text-anchor="middle" font-size="11" fill="currentColor">${axisName(axX)}</text><text transform="translate(10 ${W/2}) rotate(-90)" text-anchor="middle" font-size="11" fill="currentColor">${axisName(axY)}</text>`;
+    const cw=2*SC/N;for(const [a,b,v] of vals){const o=hi>lo?0.04+0.5*(v-lo)/(hi-lo):0.1;g+=`<rect x="${PAD+a*cw}" y="${W-PAD-(b+1)*cw}" width="${cw+.4}" height="${cw+.4}" style="fill:rgba(${heat},${o.toFixed(3)})"/>`}
+    g+=`<text x="${W-PAD}" y="${PAD-12}" text-anchor="end" class="txm">prediction variance ${lo.toFixed(2)}–${hi.toFixed(2)} σ²</text>`;
+  } else g+=`<text x="${W/2}" y="${PAD-12}" text-anchor="middle" class="txm" style="fill:var(--warn)">not estimable: no variance map</text>`;
+  g+=`<rect x="${PAD}" y="${PAD}" width="${2*SC}" height="${2*SC}" class="ax"/>`;
+  for(const t of [-1,0,1]){
+    const lx=c?natFmt(c.f[axX],t):t, ly=c?natFmt(c.f[axY],t):t;
+    g+=`<text x="${sx(t)}" y="${W-PAD+14}" text-anchor="middle" class="tx">${lx}</text><text x="${PAD-5}" y="${sy(t)+3}" text-anchor="end" class="tx">${ly}</text>`}
+  const unitX=c?` (${c.f[axX][1]})`:"", unitY=c?` (${c.f[axY][1]})`:"";
+  g+=`<text x="${W/2}" y="${W-4}" text-anchor="middle" class="tx" style="font-size:11.5px">${c?c.f[axX][0]:axisName(axX)}${unitX}</text><text transform="translate(10 ${W/2}) rotate(-90)" text-anchor="middle" class="tx" style="font-size:11.5px">${c?c.f[axY][0]:axisName(axY)}${unitY}</text>`;
   const cnt={};for(const r of P.X1){const key=r[axX]+","+r[axY];cnt[key]=(cnt[key]||0)+1}
-  for(const [key,c] of Object.entries(cnt)){const [a,b]=key.split(",").map(Number);g+=`<circle cx="${sx(a)}" cy="${sy(b)}" r="6" fill="var(--paper)" stroke="var(--s1)" stroke-width="1.5"/>`;if(c>1)g+=`<text x="${sx(a)+8}" y="${sy(b)-6}" font-size="9" fill="var(--s1)">${c}</text>`}
-  X2.forEach((r,i)=>{g+=`<g class="pt" data-i="${i}" style="cursor:grab"><circle cx="${sx(r[axX])}" cy="${sy(r[axY])}" r="9" fill="var(--ink)"/><text x="${sx(r[axX])}" y="${sy(r[axY])+3.5}" text-anchor="middle" font-size="10" font-weight="700" fill="var(--paper)" pointer-events="none">${i+1}</text></g>`});
+  for(const [key,n] of Object.entries(cnt)){const [a,b]=key.split(",").map(Number);g+=`<circle cx="${sx(a)}" cy="${sy(b)}" r="6" class="pt-s1"/>`;if(n>1)g+=`<text x="${sx(a)+8}" y="${sy(b)-6}" style="fill:var(--s1);font-size:9.5px">${n}</text>`}
+  X2.forEach((r,i)=>{g+=`<g class="pt" data-i="${i}" style="cursor:grab"><circle cx="${sx(r[axX])}" cy="${sy(r[axY])}" r="9.5" class="pt-s2"/><text x="${sx(r[axX])}" y="${sy(r[axY])+3.5}" text-anchor="middle" class="pt-lab" pointer-events="none">${i+1}</text></g>`});
   svg.innerHTML=g;
   svg.querySelectorAll(".pt").forEach(el=>el.addEventListener("pointerdown",startDrag));
 }
@@ -621,14 +999,14 @@ function startDrag(ev){
 }
 
 async function runOpt(crit){
-  if(busy)return; const n2=X2.length; if(n2<2){$("status").textContent="Add at least two runs first.";return}
+  if(busy)return; const n2=X2.length; if(n2<2){$("status").textContent="Add at least two runs first: one follow-up run carries no information once the stage shift is fitted.";return}
   busy=true; document.querySelectorAll("#explorer button").forEach(b=>b.disabled=true);
   const starts=Math.max(1,Math.min(200,+$("nstart").value||12)), name={psi:"Ψ",C:"C",Iu:"I_u"}[crit];
-  const res=await exchange(P,n2,crit,starts,(s,v)=>{$("status").textContent=`Coordinate exchange on ${name}: start ${s}/${starts}, best ${name} = ${v.toFixed(4)}`});
+  const res=await exchange(P,n2,crit,starts,(s,v)=>{$("status").textContent=`Coordinate exchange on ${name}: start ${s} of ${starts}, best ${name} = ${v.toFixed(4)}`});
   X2=res.X.map(r=>r.map(v=>Math.abs(v)<5e-4?0:v));
   const e=evaluate(P,X2);
   let msg=`Done: ${starts} starts, selected by ${name}. Under the stage-adjusted analysis this design has Ψ = ${fmt(e.psi)} and C = ${fmt(e.C)}.`;
-  if(crit==="Iu"){const poolBest=Math.min(...res.all.map(a=>psiOf(P,a.X)));msg+=` Re-ranking the same ${starts} naive terminal designs by Ψ would have chosen Ψ = ${poolBest.toFixed(4)} (same-pool best).`}
+  if(crit==="Iu"){const poolBest=Math.min(...res.all.map(a=>psiOf(P,a.X)));msg+=` Re-ranking the same ${starts} naive designs by Ψ would have chosen Ψ = ${poolBest.toFixed(4)} (same-pool best).`}
   $("status").textContent=msg; busy=false; document.querySelectorAll("#explorer button").forEach(b=>b.disabled=false); render();
 }
 
@@ -643,8 +1021,12 @@ function initExplorer(){
   $("opt-psi").addEventListener("click",()=>runOpt("psi"));
   $("opt-C").addEventListener("click",()=>runOpt("C"));
   $("opt-Iu").addEventListener("click",()=>runOpt("Iu"));
-  $("copy").addEventListener("click",()=>{const csv=[P.active.map(a=>"x"+a).join(","),...X2.map(r=>r.map(v=>+v.toFixed(6)).join(","))].join("\n");
-    navigator.clipboard&&navigator.clipboard.writeText(csv).then(()=>{$("copied").textContent="copied"},()=>{$("copied").textContent="clipboard unavailable"})});
+  $("copy").addEventListener("click",()=>{const c=ctx();
+    const head=["run",...P.active.map((a,i)=>"x"+(i+1)+"_coded"),...(c?c.f.map(f=>`${f[0]} (${f[1]})`):[])].join(",");
+    const rows=X2.map((r,i)=>[i+1,...r.map(v=>+v.toFixed(6)),...(c?r.map((v,j)=>natFmt(c.f[j],v)):[])].join(","));
+    const csv=[head,...rows].join("\n");
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(csv).then(()=>{$("copied").textContent="Copied to clipboard"},()=>{$("copied").textContent="Clipboard blocked here. Select the doses in the table instead."})}
+    else $("copied").textContent="Clipboard unavailable. Select the doses in the table instead."});
   document.querySelectorAll("[data-load]").forEach(a=>a.addEventListener("click",()=>{const [key,name]=a.dataset.load.split("|");
     if(scenKey!==key||$("scen").value==="custom"){$("scen").value=key;$("customBox").hidden=true;const [m,k]=key.split(",").map(Number);setScenario(m,[...Array(k).keys()].map(i=>i+1),4,key)}
     $("preset").value=name;loadPreset(name)}));
@@ -653,9 +1035,118 @@ function initExplorer(){
 function applyCustom(){
   const m=+$("cm").value, act=$("cact").value.split(/[ ,]+/).map(Number).filter(a=>a>=1&&a<=m);
   const uniq=[...new Set(act)].sort((a,b)=>a-b), n2=Math.max(2,Math.min(12,+$("cn2").value||4));
-  if(uniq.length<2||uniq.length>5){$("status").textContent="Choose 2–5 distinct active factors between 1 and m.";return}
-  scenKey="custom"; P=makeProblem(m,uniq); setScenario(m,uniq,n2,"custom-"+m+"-"+uniq.join("."));
+  if(uniq.length<2||uniq.length>5){$("status").textContent="Choose 2 to 5 distinct active factors between 1 and m.";return}
+  setScenario(m,uniq,n2,"custom-"+m+"-"+uniq.join("."));
   $("status").textContent=`Custom projection: r₁ = ${P.r1}, q = ${P.q}; Theorem 1 needs n₂ ≥ ${P.q?P.q+1:2}.`;
+}
+
+/* ===================== season-shift simulator ===================== */
+const SIM_BETA=[6.0,0.6,1.2,-0.4,-0.8,-1.0,-0.3,0.3,0.0,-0.4];
+const SIM_N=200;
+let SIM=null;
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function simInit(){
+  const P6=makeProblem(6,[1,2,3]), rnd=mulberry32(20261123), n=13+4;
+  const eps=Array.from({length:SIM_N},()=>Array.from({length:n},()=>{let u=0,v=0;while(!u)u=rnd();v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}));
+  const jit=Array.from({length:SIM_N},()=>rnd());
+  SIM={P6,eps,jit};
+}
+function simTargetVec(name){
+  if(name==="centre")return frow([0,0,0]);
+  if(name==="gain"){const a=frow([.5,.5,-.5]),b=frow([0,0,0]);return a.map((v,i)=>v-b[i])}
+  const mom=moments(3);return [1,...mom.mu];
+}
+function simWeights(X2d,c,adjusted){
+  const rows=[...SIM.P6.X1.map(x=>({f:frow(x),s:0})),...X2d.map(x=>({f:frow(x),s:1}))];
+  const Xm=rows.map(r=>adjusted?[...r.f,r.s]:r.f.slice());
+  const Mi=spdInv(crossprod(Xm)); if(!Mi)return null;
+  const ce=adjusted?[...c,0]:c, a=matVec(Mi,ce);
+  return {w:Xm.map(x=>dot(a,x)),s:rows.map(r=>r.s),F:rows.map(r=>r.f)};
+}
+function simStats(X2d,c,delta,sigma,adjusted){
+  const W=simWeights(X2d,c,adjusted); if(!W)return null;
+  const truth=dot(c,SIM_BETA);
+  const EY=W.F.map((f,i)=>dot(f,SIM_BETA)+W.s[i]*delta);
+  const mean=dot(W.w,EY), se=sigma*Math.sqrt(dot(W.w,W.w)), bias=mean-truth;
+  return {W,truth,mean,se,bias,rmse:Math.sqrt(bias*bias+se*se),EY};
+}
+function drawSim(){
+  const delta=+$("simDelta").value, sigma=+$("simSigma").value, tgt=$("simTarget").value, dz=$("simDesign").value;
+  $("simDeltaV").textContent=(delta>0?"+":"")+delta.toFixed(1); $("simSigmaV").textContent=sigma.toFixed(2);
+  const c=simTargetVec(tgt), X2d=DESIGNS["6,3,4"][dz];
+  const pool=simStats(X2d,c,delta,sigma,false), adj=simStats(X2d,c,delta,sigma,true);
+  const est=st=>SIM.eps.map(e=>st.mean+sigma*dot(st.W.w,e));
+  const ep=est(pool), ea=est(adj), truth=adj.truth;
+  const all=[...ep,...ea,truth]; let lo=Math.min(...all), hi=Math.max(...all); const padv=(hi-lo)*0.06||1; lo-=padv; hi+=padv;
+  const L=150,R=24,Wd=680, x=v=>L+(v-lo)/(hi-lo)*(Wd-L-R);
+  const rows=[{lab:"Pooled analysis",sub:"ignores the batch effect",st:pool,e:ep,y:62,cls:"s1"},{lab:"Batch-adjusted analysis",sub:"fits δ, as in model (1)",st:adj,e:ea,y:152,cls:"s2"}];
+  let g="";
+  const step=niceStep((hi-lo)/6); for(let t=Math.ceil(lo/step)*step;t<=hi;t+=step){g+=`<line x1="${x(t)}" x2="${x(t)}" y1="22" y2="196" class="grid"/><text x="${x(t)}" y="212" text-anchor="middle" class="txm">${(+t.toFixed(6)).toString()}</text>`}
+  g+=`<line x1="${x(truth)}" x2="${x(truth)}" y1="16" y2="198" style="stroke:var(--ink);stroke-width:1.6;stroke-dasharray:4 3"/><text x="${x(truth)}" y="12" text-anchor="middle" class="tx" style="font-weight:600">true value ${truth.toFixed(2)}</text>`;
+  for(const r of rows){
+    g+=`<text x="8" y="${r.y-4}" class="tx" style="font-weight:600;font-size:12px">${r.lab}</text><text x="8" y="${r.y+12}" class="txm">${r.sub}</text>`;
+    r.e.forEach((v,i)=>{g+=`<circle cx="${x(v).toFixed(1)}" cy="${(r.y-22+SIM.jit[i]*44).toFixed(1)}" r="2.6" style="fill:var(--${r.cls});fill-opacity:.55"/>`});
+    const a=x(r.st.mean-1.96*r.st.se), b=x(r.st.mean+1.96*r.st.se);
+    g+=`<line x1="${a}" x2="${b}" y1="${r.y+30}" y2="${r.y+30}" style="stroke:var(--${r.cls});stroke-width:3"/><circle cx="${x(r.st.mean)}" cy="${r.y+30}" r="4.5" style="fill:var(--${r.cls})"/>`;
+  }
+  g+=`<text x="${(L+Wd-R)/2}" y="228" text-anchor="middle" class="txm">${tgt==="gain"?"estimated gain (shoots per explant)":"estimated shoots per explant"}</text>`;
+  $("simsvg").innerHTML=g;
+  const big=Math.abs(pool.bias)>0.5*pool.se;
+  $("simSay").innerHTML=`With a batch shift of ${delta.toFixed(1)}, the pooled estimate is off by <b>${pool.bias>=0?"+":""}${pool.bias.toFixed(2)}</b> on average (RMSE ${pool.rmse.toFixed(2)}). The batch-adjusted estimate is unbiased, with standard error ${adj.se.toFixed(2)}. `+
+    (Math.abs(delta)<0.05?"With no shift, pooling is slightly more precise. That advantage disappears as soon as the batches differ.":big?"Here the bias is larger than half a standard error, so pooled confidence intervals mislead.":"At this small shift the bias is still modest relative to the noise.");
+  const designs=[["psi_exact","Stage-aware Ψ"],["C_aware","Stage-aware C"],["Iu_naive","Stage-naive I_u"]];
+  const res=designs.map(([k,l])=>({k,l,a:simStats(DESIGNS["6,3,4"][k],c,delta,sigma,true),p:simStats(DESIGNS["6,3,4"][k],c,delta,sigma,false)}));
+  const bestSE=Math.min(...res.map(r=>r.a.se));
+  let h=`<tr><th>Batch 2 design</th><th>SE, adjusted</th><th>Cultures needed vs best</th><th>Bias, pooled</th><th>RMSE, pooled</th></tr>`;
+  for(const r of res){const isB=Math.abs(r.a.se-bestSE)<1e-9;
+    h+=`<tr${r.k===dz?' style="background:var(--accent-soft)"':""}><td>${r.l}</td><td class="${isB?"best":""}">${r.a.se.toFixed(3)}</td><td>${isB?"1.00×":((r.a.se/bestSE)**2).toFixed(2)+"×"}</td><td>${r.p.bias>=0?"+":""}${r.p.bias.toFixed(3)}</td><td>${r.p.rmse.toFixed(3)}</td></tr>`}
+  $("simTable").innerHTML=h;
+}
+function niceStep(raw){const p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p;return (f<1.5?1:f<3.5?2:f<7.5?5:10)*p}
+
+/* ===================== Fig. 0 dots, Fig. 2, Fig. 3 ===================== */
+function drawFig0(){
+  const D=dsd(6), g1=[], g2=[];
+  D.forEach((r,i)=>{const col=i%7,row=Math.floor(i/7);g1.push(`<circle cx="${30+col*22}" cy="${112+row*24}" r="7" class="pt-s1"/>`)});
+  [[0,0],[1,0],[0,1],[1,1]].forEach(([c,r],i)=>g2.push(`<circle cx="${490+c*26}" cy="${116+r*26}" r="9" class="pt-s2"/><text x="${490+c*26}" y="${119.5+r*26}" text-anchor="middle" class="pt-lab">${i+1}</text>`));
+  $("f0dots").innerHTML=g1.join(""); $("f0dots2").innerHTML=g2.join("");
+}
+function drawFig2(){
+  const P6=makeProblem(6,[1,2,3]), c=CTX["6,3,4"], pairs=[[0,1],[0,2],[1,2]];
+  const rowsD=[["Baseline design (Ψ)",DESIGNS["6,3,4"].psi_exact],["Contrast design (C)",DESIGNS["6,3,4"].C_aware]];
+  const pw=200, ph=200, ox=[54,306,558], oy=[30,290];
+  let g="";
+  rowsD.forEach(([lab,X],ri)=>{
+    g+=`<text x="8" y="${oy[ri]-12}" class="tx" style="font-weight:600;font-size:12.5px">${lab}</text>`;
+    pairs.forEach(([a,b],ci)=>{
+      const X0=ox[ci], Y0=oy[ri], px=v=>X0+(v+1)/2*pw, py=v=>Y0+ph-(v+1)/2*ph;
+      g+=`<rect x="${X0}" y="${Y0}" width="${pw}" height="${ph}" class="ax"/>`;
+      for(const t of [-1,0,1]){g+=`<line x1="${px(t)}" x2="${px(t)}" y1="${Y0}" y2="${Y0+ph}" class="grid"/><line x1="${X0}" x2="${X0+pw}" y1="${py(t)}" y2="${py(t)}" class="grid"/>`;
+        g+=`<text x="${px(t)}" y="${Y0+ph+13}" text-anchor="middle" class="txm">${natFmt(c.f[a],t)}</text><text x="${X0-5}" y="${py(t)+3}" text-anchor="end" class="txm">${natFmt(c.f[b],t)}</text>`}
+      g+=`<text x="${X0+pw/2}" y="${Y0+ph+27}" text-anchor="middle" class="tx">${c.f[a][0]} (${c.f[a][1]})</text><text transform="translate(${X0-36} ${Y0+ph/2}) rotate(-90)" text-anchor="middle" class="tx">${c.f[b][0]} (${c.f[b][1]})</text>`;
+      const cnt={};P6.X1.forEach(r=>{const k=r[a]+","+r[b];cnt[k]=(cnt[k]||0)+1});
+      for(const [k,n] of Object.entries(cnt)){const [u,v]=k.split(",").map(Number);g+=`<circle cx="${px(u)}" cy="${py(v)}" r="6" class="pt-s1"/>`;if(n>1)g+=`<text x="${px(u)+8}" y="${py(v)-7}" style="fill:var(--s1);font-size:9.5px">${n}</text>`}
+      const seen={};X.forEach((r,i)=>{const k=r[a].toFixed(2)+","+r[b].toFixed(2);const off=(seen[k]||0)*13;seen[k]=(seen[k]||0)+1;
+        g+=`<circle cx="${px(r[a])+off}" cy="${py(r[b])-off}" r="8.5" class="pt-s2"/><text x="${px(r[a])+off}" y="${py(r[b])-off+3.5}" text-anchor="middle" class="pt-lab">${i+1}</text>`});
+    });
+  });
+  $("fig2svg").innerHTML=g;
+}
+function drawFig3(){
+  const data=[["(6,3,4) tissue culture",0.3566,0.3943,0.5518],["(8,4,6) rice nutrients",0.4538,0.5326,0.5326],["(10,4,4) seed priming",0.7049,0.7246,0.7246]];
+  const L=170,R=30,Wd=640,lo=0.3,hi=0.8,x=v=>L+(v-lo)/(hi-lo)*(Wd-L-R);
+  let g="";
+  for(let t=0.3;t<=0.801;t+=0.1){g+=`<line x1="${x(t)}" x2="${x(t)}" y1="14" y2="160" class="grid"/><text x="${x(t)}" y="176" text-anchor="middle" class="txm">${t.toFixed(1)}</text>`}
+  g+=`<text x="${(L+Wd-R)/2}" y="198" text-anchor="middle" class="txm">Ψ under the stage-adjusted analysis (lower is better)</text>`;
+  data.forEach(([lab,a,pb,n],i)=>{const y=36+i*48;
+    g+=`<text x="8" y="${y+4}" class="tx" style="font-size:11.5px">${lab}</text>`;
+    g+=`<line x1="${x(a)}" x2="${x(n)}" y1="${y}" y2="${y}" style="stroke:var(--muted);stroke-width:2"/>`;
+    g+=`<circle cx="${x(pb)}" cy="${y}" r="6" style="fill:var(--paper);stroke:var(--s1);stroke-width:1.8"/>`;
+    g+=`<path d="M${x(n)-5},${y-5}L${x(n)+5},${y+5}M${x(n)-5},${y+5}L${x(n)+5},${y-5}" style="stroke:var(--warn);stroke-width:2.2"/>`;
+    g+=`<circle cx="${x(a)}" cy="${y}" r="6.5" style="fill:var(--accent)"/>`;
+    g+=`<text x="${x(n)+10}" y="${y-8}" class="txm">−${((n-a)/n*100).toFixed(1)}%</text>`;
+  });
+  $("fig3svg").innerHTML=g;
 }
 
 /* ===================== verify tables in-browser ===================== */
@@ -667,60 +1158,98 @@ function checkTables(){
     ok1=ok1&&Math.abs(psiOf(Pp,D.psi_aware)-t1[s][0])<6e-5&&Math.abs(psiOf(Pp,D.Iu_naive)-t1[s][1])<6e-5;
     const c=[cOf(Pp,D.psi_aware),cOf(Pp,D.Iu_naive),cOf(Pp,D.C_aware),cOf(Pp,D.Cu_pooled)];
     ok2=ok2&&c.every((v,i)=>Math.abs(v-t2[s][i])<6e-5)});
-  $("t1check").innerHTML=ok1?'<span class="good">✓ Ψ values recomputed in your browser from the stored designs.</span>':'<span class="warn">Browser recomputation differs.</span>';
-  $("t2check").innerHTML=ok2?'<span class="good">✓ C values recomputed in your browser.</span>':'<span class="warn">Browser recomputation differs.</span>';
+  $("t1check").innerHTML=ok1?'<span class="good">✓ Ψ values recomputed in your browser from the stored designs.</span>':'<span class="warn">Browser recomputation differs from the table.</span>';
+  $("t2check").innerHTML=ok2?'<span class="good">✓ C values recomputed in your browser.</span>':'<span class="warn">Browser recomputation differs from the table.</span>';
 }
 
 /* ===================== rank audit ===================== */
 function combos(n,k){const out=[],c=[];(function rec(s){if(c.length===k){out.push(c.slice());return}for(let i=s;i<=n;i++){c.push(i);rec(i+1);c.pop()}})(1);return out}
 function runAudit(){
-  let h='<table class="t"><tr><th>m</th><th>n₁</th><th>3-factor full rank</th><th>4-factor full rank</th><th>4-factor rank classes (q : count)</th><th>min n₂ (Thm 1)</th></tr>';
+  let h='<table class="t"><tr><th>m</th><th>n₁</th><th>3-factor full rank</th><th>4-factor full rank</th><th>4-factor rank classes (q : count)</th><th>min n₂ (Thm 1)</th></tr>', total=0;
   for(let m=5;m<=14;m++){const D=dsd(m);
-    const r3=combos(m,3).map(s=>rankOf(D.map(r=>frow(s.map(a=>r[a-1])))));
-    const r4=combos(m,4).map(s=>rankOf(D.map(r=>frow(s.map(a=>r[a-1])))));
+    const c3=combos(m,3), c4=combos(m,4); total+=c3.length+c4.length;
+    const r3=c3.map(s=>rankOf(D.map(r=>frow(s.map(a=>r[a-1])))));
+    const r4=c4.map(s=>rankOf(D.map(r=>frow(s.map(a=>r[a-1])))));
     const cls={};r4.forEach(r=>{const q=15-r;cls[q]=(cls[q]||0)+1});
     const qs=Object.keys(cls).map(Number).sort((a,b)=>a-b);
     h+=`<tr><td>${m}</td><td>${D.length}</td><td>${r3.filter(r=>r===10).length}/${r3.length}</td><td>${r4.filter(r=>r===15).length}/${r4.length}</td><td>${qs.map(q=>`${q} : ${cls[q]}`).join(", ")}</td><td>${qs.map(q=>q?q+1:0).join(" / ")}</td></tr>`}
-  $("auditOut").innerHTML=h+"</table>";
+  $("auditOut").innerHTML=h+`</table><p class="note">${total.toLocaleString("en")} projections checked.</p>`;
 }
 
 /* ===================== Fig. 1 ===================== */
 function drawFig1(){
   const eps=+$("eps").value, dmin=Math.max(0,+$("dmin").value||0); $("epsv").textContent=eps.toFixed(4);
-  const svg=$("fig1svg"), L=58,R=150,T=14,B=40,Wd=560,Ht=300, x=n=>L+n*(Wd-L-R)/6, y=v=>T+(0.74-v)*(Ht-T-B)/(0.74-0.28);
+  const svg=$("fig1svg"), L=58,R=170,T=14,B=40,Wd=560,Ht=300, x=n=>L+n*(Wd-L-R)/6, y=v=>T+(0.74-v)*(Ht-T-B)/(0.74-0.28);
   let g="";
-  for(const v of [0.3,0.4,0.5,0.6,0.7]){g+=`<line x1="${L}" x2="${Wd-R}" y1="${y(v)}" y2="${y(v)}" stroke="currentColor" stroke-opacity=".1"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="currentColor">${v.toFixed(1)}</text>`}
-  for(let n=0;n<=6;n++)g+=`<text x="${x(n)}" y="${Ht-B+16}" text-anchor="middle" font-size="11" fill="currentColor">${n}</text>`;
-  g+=`<text x="${(L+Wd-R)/2}" y="${Ht-6}" text-anchor="middle" font-size="12" fill="currentColor">Number of follow-up runs, n₂</text>`;
-  g+=`<text transform="translate(14 ${(T+Ht-B)/2}) rotate(-90)" text-anchor="middle" font-size="12" fill="currentColor">Best-found Ψ</text>`;
-  g+=`<line x1="${L}" x2="${Wd-R}" y1="${y(eps)}" y2="${y(eps)}" stroke="var(--warn)" stroke-dasharray="4 3"/><text x="${Wd-R+6}" y="${y(eps)+4}" font-size="11" fill="var(--warn)">ε = ${eps.toFixed(4)}</text>`;
+  for(const v of [0.3,0.4,0.5,0.6,0.7]){g+=`<line x1="${L}" x2="${Wd-R}" y1="${y(v)}" y2="${y(v)}" class="grid"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end" class="tx">${v.toFixed(1)}</text>`}
+  for(let n=0;n<=6;n++)g+=`<text x="${x(n)}" y="${Ht-B+16}" text-anchor="middle" class="tx">${n}</text>`;
+  g+=`<text x="${(L+Wd-R)/2}" y="${Ht-6}" text-anchor="middle" class="tx" style="font-size:12px">Number of follow-up runs, n₂</text>`;
+  g+=`<text transform="translate(14 ${(T+Ht-B)/2}) rotate(-90)" text-anchor="middle" class="tx" style="font-size:12px">Best-found Ψ</text>`;
+  g+=`<line x1="${L}" x2="${Wd-R}" y1="${y(eps)}" y2="${y(eps)}" style="stroke:var(--warn);stroke-dasharray:4 3"/><text x="${Wd-R+6}" y="${y(eps)+4}" style="fill:var(--warn);font-size:11px">ε = ${eps.toFixed(4)}</text>`;
   const decide=m=>TRAJ.filter(r=>r.m===m&&isFinite(r.psi)&&(r.n2!==1)).find(r=>r.df>=dmin&&r.psi<=eps);
   const res={};
-  for(const [m,dash,lab] of [[6,"","m = 6, k = 3 (n₁ = 13)"],[8,"6 4","m = 8, k = 4 (n₁ = 17)"]]){
+  for(const [m,dash,lab,col] of [[6,"","tissue culture, k = 3","--s1"],[8,"6 4","rice nutrients, k = 4","--s2"]]){
     const pts=TRAJ.filter(r=>r.m===m&&isFinite(r.psi)); const ch=decide(m); res[m]=ch;
-    g+=`<polyline fill="none" stroke="var(--ink)" stroke-width="1.6" stroke-dasharray="${dash}" points="${pts.map(r=>x(r.n2)+","+y(r.psi)).join(" ")}"/>`;
-    pts.forEach(r=>{const sel=ch&&ch.n2===r.n2;g+=m===6?`<circle cx="${x(r.n2)}" cy="${y(r.psi)}" r="${sel?7:4.5}" fill="${sel?"var(--accent)":"var(--ink)"}"><title>n₂=${r.n2}: Ψ=${r.psi.toFixed(4)}, df=${r.df}</title></circle>`:`<rect x="${x(r.n2)-(sel?6:4.5)}" y="${y(r.psi)-(sel?6:4.5)}" width="${sel?12:9}" height="${sel?12:9}" fill="${sel?"var(--accent)":"var(--paper)"}" stroke="var(--ink)"><title>n₂=${r.n2}: Ψ=${r.psi.toFixed(4)}, df=${r.df}</title></rect>`});
-    const last=pts[pts.length-1]; g+=`<text x="${Wd-R+6}" y="${y(last.psi)+(m===6?14:-6)}" font-size="11" fill="currentColor">${lab}</text>`;
+    g+=`<polyline fill="none" style="stroke:var(${col});stroke-width:1.8" stroke-dasharray="${dash}" points="${pts.map(r=>x(r.n2)+","+y(r.psi)).join(" ")}"/>`;
+    pts.forEach(r=>{const sel=ch&&ch.n2===r.n2;g+=m===6?`<circle cx="${x(r.n2)}" cy="${y(r.psi)}" r="${sel?7:4.5}" style="fill:var(${sel?"--accent":col})"><title>n₂=${r.n2}: Ψ=${r.psi.toFixed(4)}, df=${r.df}</title></circle>`:`<rect x="${x(r.n2)-(sel?6:4.5)}" y="${y(r.psi)-(sel?6:4.5)}" width="${sel?12:9}" height="${sel?12:9}" style="fill:var(${sel?"--accent":"--paper"});stroke:var(${col});stroke-width:1.6"><title>n₂=${r.n2}: Ψ=${r.psi.toFixed(4)}, df=${r.df}</title></rect>`});
+    const last=pts[pts.length-1]; g+=`<text x="${Wd-R+6}" y="${y(last.psi)+(m===6?14:-6)}" style="fill:var(${col});font-size:11px">${lab}</text>`;
   }
-  g+=`<text x="${x(1)}" y="${y(0.31)}" text-anchor="middle" font-size="10" fill="currentColor" opacity=".7">n₂ = 1 adds no</text><text x="${x(1)}" y="${y(0.31)+12}" text-anchor="middle" font-size="10" fill="currentColor" opacity=".7">adjusted information</text>`;
+  g+=`<text x="${x(1)}" y="${y(0.31)}" text-anchor="middle" class="txm">n₂ = 1 adds no</text><text x="${x(1)}" y="${y(0.31)+12}" text-anchor="middle" class="txm">adjusted information</text>`;
   svg.innerHTML=g;
   const say=(m,lab)=>res[m]?`${lab}: choose <b>n₂ = ${res[m].n2}</b> (Ψ = ${res[m].psi.toFixed(4)}, ${res[m].df} residual df).`:`${lab}: no n₂ ≤ 6 meets ε = ${eps.toFixed(4)} with d<sub>min</sub> = ${dmin}.`;
-  $("decision").innerHTML=say(6,"(6,3) projection")+"<br>"+say(8,"(8,4) projection")+` <span class="note">Ψ(0) = 0.6237 for (6,3); (8,4) is not estimable below n₂ = 3.</span>`;
+  $("decision").innerHTML=say(6,"Tissue culture (6,3)")+"<br>"+say(8,"Rice nutrients (8,4)")+` <span class="note">Ψ(0) = 0.6237 for (6,3); (8,4) is not estimable below n₂ = 3.</span>`;
 }
 
 /* ===================== boot ===================== */
+function redrawAll(){render();drawFig1();drawSim();drawFig2();drawFig3()}
+function uiInit(){
+  /* section numbers, contents rail and scroll tracking */
+  const toc=$("toc"), heads=[...document.querySelectorAll("main h2")], links=[];
+  heads.forEach((h,i)=>{
+    if(!h.id)h.id="s-"+h.textContent.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40);
+    const m=h.textContent.match(/^(\d+\.|Appendix [A-Z]\.)\s*(.*)$/);
+    if(m){h.innerHTML=`<span class="num">${m[1].replace(".","")}</span>`+h.innerHTML.replace(/^(\d+\.|Appendix [A-Z]\.)\s*/,"")}
+    const a=document.createElement("a");a.href="#"+h.id;
+    const label=(m?m[2]:h.textContent).split(":")[0];
+    a.textContent=(m?m[1].replace(".","")+"  ":"")+label; toc.appendChild(a); links.push(a);
+  });
+  if("IntersectionObserver" in window){
+    const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.toggle("on",l.getAttribute("href")==="#"+e.target.id))}})},{rootMargin:"-80px 0px -70% 0px"});
+    heads.forEach(h=>io.observe(h));
+  }
+  const bar=$("progress");
+  const onScroll=()=>{const d=document.documentElement,max=d.scrollHeight-innerHeight;bar.style.transform=`scaleX(${max>0?Math.min(1,scrollY/max):0})`};
+  addEventListener("scroll",onScroll,{passive:true}); onScroll();
+  /* summary tabs */
+  const tabs=[...document.querySelectorAll('[role="tab"]')];
+  const pick=t=>{tabs.forEach(b=>{const on=b===t;b.setAttribute("aria-selected",on);b.tabIndex=on?0:-1;$(b.getAttribute("aria-controls")).hidden=!on})};
+  tabs.forEach((t,i)=>{t.addEventListener("click",()=>pick(t));
+    t.addEventListener("keydown",e=>{if(e.key==="ArrowRight"||e.key==="ArrowLeft"){const n=tabs[(i+(e.key==="ArrowRight"?1:tabs.length-1))%tabs.length];pick(n);n.focus();e.preventDefault()}})});
+  /* copy citation */
+  const cb=$("copyBib");
+  if(cb)cb.addEventListener("click",()=>{const txt=$("bibtex").textContent;
+    const done=m=>{cb.textContent=m;setTimeout(()=>{cb.textContent="Copy BibTeX"},1800)};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(()=>done("Copied"),()=>{const r=document.createRange();r.selectNodeContents($("bibtex"));const s=getSelection();s.removeAllRanges();s.addRange(r);done("Selected, press Ctrl+C")});
+    else done("Select the text to copy")});
+}
 function themeInit(){const root=document.documentElement;let saved=null;try{saved=localStorage.getItem("theme")}catch(e){}
-  if(saved)root.setAttribute("data-theme",saved);
-  $("themeBtn").addEventListener("click",()=>{const dark=root.getAttribute("data-theme")?root.getAttribute("data-theme")==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
-    const next=dark?"light":"dark";root.setAttribute("data-theme",next);try{localStorage.setItem("theme",next)}catch(e){};render();drawFig1()})}
-document.addEventListener("DOMContentLoaded",()=>{
-  if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],throwOnError:false});
-  themeInit(); initExplorer(); checkTables();
+  if(saved==="dark"||saved==="light")root.setAttribute("data-theme",saved);
+  $("themeBtn").addEventListener("click",()=>{const cur=root.getAttribute("data-theme");const dark=cur?cur==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
+    const next=dark?"light":"dark";root.setAttribute("data-theme",next);try{localStorage.setItem("theme",next)}catch(e){};redrawAll()});
+  try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",redrawAll)}catch(e){}
+}
+function fieldInit(){const t=$("fieldTog");let s=null;try{s=localStorage.getItem("fieldnotes")}catch(e){}
+  if(s==="off"){t.checked=false;document.body.classList.add("nofield")}
+  t.addEventListener("change",()=>{document.body.classList.toggle("nofield",!t.checked);try{localStorage.setItem("fieldnotes",t.checked?"on":"off")}catch(e){}})}
+function boot(){
+  themeInit(); fieldInit(); initExplorer(); checkTables(); simInit();
+  ["simDelta","simSigma","simTarget","simDesign"].forEach(id=>{$(id).addEventListener("input",drawSim);$(id).addEventListener("change",drawSim)});
   $("runAudit").addEventListener("click",()=>{$("runAudit").disabled=true;$("auditOut").textContent="Computing…";setTimeout(()=>{runAudit();$("runAudit").disabled=false},20)});
   $("eps").addEventListener("input",drawFig1); $("dmin").addEventListener("input",drawFig1);
   document.querySelectorAll("[data-eps]").forEach(b=>b.addEventListener("click",()=>{$("eps").value=b.dataset.eps;drawFig1()}));
-  drawFig1();
-});
+  drawFig1(); drawSim(); drawFig2(); drawFig3(); uiInit();
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
 </script>
-</body>
+
 </html>

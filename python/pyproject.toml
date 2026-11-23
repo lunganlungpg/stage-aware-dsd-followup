@@ -9,7 +9,7 @@ description = "Stage-aware follow-up designs for definitive screening experiment
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
-authors = [{ name = "Lunganlung P G" }, { name = "Prabhakar Verma" }]
+authors = [{ name = "Lunganlung P. G." }, { name = "Prabhakar Verma" }]
 dependencies = ["numpy>=1.21", "scipy>=1.7"]
 
 [project.optional-dependencies]

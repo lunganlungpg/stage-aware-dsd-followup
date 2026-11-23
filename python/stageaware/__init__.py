@@ -1,6 +1,6 @@
 """Stage-aware follow-up designs for definitive screening experiments.
 
-Companion code for Lunganlung P G and Prabhakar Verma, "Stage-aware follow-up
+Companion code for Lunganlung P. G. and Prabhakar Verma, "Stage-aware follow-up
 designs for definitive screening experiments: exact criteria, rank completion
 and pooled-criterion bias" (preprint).
 """

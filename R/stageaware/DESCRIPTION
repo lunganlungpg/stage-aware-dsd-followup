@@ -3,7 +3,7 @@ Type: Package
 Title: Stage-Aware Follow-Up Designs for Definitive Screening Experiments
 Version: 1.0.0
 Authors@R: c(
-    person("Lunganlung P G", role = c("aut", "cre"),
+    person("Lunganlung", "P. G.", role = c("aut", "cre"),
            email = "lunganlungpg@users.noreply.github.com"),
     person("Prabhakar", "Verma", role = "aut"))
 Description: Exact stage-adjusted criteria, stage-confounding diagnostics,

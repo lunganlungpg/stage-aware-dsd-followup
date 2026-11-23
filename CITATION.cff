@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use this software or the results, please cite the paper."
 title: "Stage-aware follow-up designs for definitive screening experiments: exact criteria, rank completion and pooled-criterion bias"
 authors:
-  - name: "Lunganlung P G"
+  - name: "Lunganlung P. G."
     affiliation: "ICAR-Indian Agricultural Research Institute, New Delhi"
   - family-names: "Verma"
     given-names: "Prabhakar"
@@ -23,8 +23,7 @@ preferred-citation:
   type: unpublished
   title: "Stage-aware follow-up designs for definitive screening experiments: exact criteria, rank completion and pooled-criterion bias"
   authors:
-    - family-names: "P.G."
-      given-name: "Lunganlung "
+    - name: "Lunganlung P. G."
     - family-names: "Verma"
       given-names: "Prabhakar"
   year: 2026
