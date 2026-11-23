@@ -77,7 +77,7 @@ The test suites recompute these values from the stored designs and compare them 
 @misc{lunganlung2026stageaware,
   title  = {Stage-aware follow-up designs for definitive screening experiments:
             exact criteria, rank completion and pooled-criterion bias},
-  author = {Lunganlung P G and Verma, Prabhakar},
+  author = {P.G., Lunganlung  and Verma, Prabhakar},
   year   = {2026},
   note   = {Preprint},
   url    = {https://github.com/lunganlungpg/stage-aware-dsd-followup}
