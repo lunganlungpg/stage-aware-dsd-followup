@@ -23,7 +23,8 @@ preferred-citation:
   type: unpublished
   title: "Stage-aware follow-up designs for definitive screening experiments: exact criteria, rank completion and pooled-criterion bias"
   authors:
-    - name: "Lunganlung P G"
+    - family-names: "P.G."
+      given-name: "Lunganlung "
     - family-names: "Verma"
       given-names: "Prabhakar"
   year: 2026
