@@ -1,0 +1,16 @@
+Package: stageaware
+Type: Package
+Title: Stage-Aware Follow-Up Designs for Definitive Screening Experiments
+Version: 1.0.0
+Authors@R: c(
+    person("Lunganlung P G", role = c("aut", "cre"),
+           email = "lunganlungpg@users.noreply.github.com"),
+    person("Prabhakar", "Verma", role = "aut"))
+Description: Exact stage-adjusted criteria, stage-confounding diagnostics,
+    rank-completion run counts and coordinate exchange with a centred rank-two
+    update for choosing follow-up runs after a definitive screening design when
+    the combined analysis includes a fixed stage effect. Base R only.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Imports: stats, utils
+Suggests: testthat

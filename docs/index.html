@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stage-aware follow-up designs</title>
+<meta name="description" content="Interactive preprint: stage-aware follow-up designs for definitive screening experiments — exact criteria, rank completion and pooled-criterion bias.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#fbfaf7; --paper:#ffffff; --ink:#1d1d1f; --muted:#5f6368; --rule:#e3e0d8;
+  --accent:#1f5fa8; --accent-soft:#e7eef8; --warn:#a8461f; --good:#1f7a4d;
+  --s1:#8a8a8a; --heat:31,95,168; --code:#f4f2ec;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141517; --paper:#1b1c1f; --ink:#e8e6e1; --muted:#a3a19b; --rule:#33343a;
+    --accent:#7fb0ec; --accent-soft:#1f2a38; --warn:#f0936b; --good:#6fcf9b;
+    --s1:#9a9a9a; --heat:127,176,236; --code:#24262b;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141517; --paper:#1b1c1f; --ink:#e8e6e1; --muted:#a3a19b; --rule:#33343a;
+  --accent:#7fb0ec; --accent-soft:#1f2a38; --warn:#f0936b; --good:#6fcf9b;
+  --s1:#9a9a9a; --heat:127,176,236; --code:#24262b;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 Charter,"Bitstream Charter","Sitka Text",Cambria,Georgia,serif}
+.wrap{max-width:780px;margin:0 auto;padding:0 16px}
+header.top{border-bottom:1px solid var(--rule);background:var(--paper)}
+.bar{display:flex;gap:12px;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto;padding:10px 16px;font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+.bar a{color:var(--accent);text-decoration:none;margin-left:14px}
+.badge{display:inline-block;font:600 12px/1 system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:5px 8px;border:1px solid var(--accent);color:var(--accent);border-radius:3px}
+h1{font-size:1.85rem;line-height:1.25;margin:2.2rem 0 1rem;font-weight:700}
+h2{font-size:1.3rem;margin:2.4rem 0 .6rem;padding-top:.4rem;border-top:1px solid var(--rule)}
+h3{font-size:1.07rem;margin:1.6rem 0 .4rem}
+.authors{font-size:1.05rem;margin:0}
+.affil{color:var(--muted);font-size:.92rem;margin:.2rem 0 1.4rem}
+.abstract{background:var(--paper);border:1px solid var(--rule);border-left:3px solid var(--accent);padding:14px 18px;margin:1.2rem 0}
+.abstract b{font-variant:small-caps;letter-spacing:.03em}
+.kw{font-size:.92rem;color:var(--muted)}
+a{color:var(--accent)}
+.prop{background:var(--paper);border:1px solid var(--rule);padding:10px 16px;margin:1rem 0}
+.prop>b:first-child{font-style:normal}
+.prop i{font-style:italic}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+ol.contrib li{margin:.25rem 0}
+table.t{border-collapse:collapse;width:100%;font:13.5px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;margin:.6rem 0 1.2rem}
+table.t th,table.t td{padding:5px 7px;text-align:right;border-bottom:1px solid var(--rule);white-space:nowrap}
+table.t th{font-weight:600;border-bottom:1.5px solid var(--ink);vertical-align:bottom}
+table.t td:first-child,table.t th:first-child{text-align:left}
+.tscroll{overflow-x:auto}
+.cap{font-size:.92rem;color:var(--muted);margin:.3rem 0 .2rem}
+.cap b{color:var(--ink)}
+details{background:var(--paper);border:1px solid var(--rule);padding:8px 14px;margin:.7rem 0}
+details summary{cursor:pointer;font-weight:600}
+.refs p{font-size:.92rem;padding-left:1.4em;text-indent:-1.4em;margin:.35rem 0}
+pre{background:var(--code);padding:12px;overflow-x:auto;font:13px/1.45 ui-monospace,Consolas,monospace;border-radius:4px}
+code{font:.9em ui-monospace,Consolas,monospace;background:var(--code);padding:1px 4px;border-radius:3px}
+
+/* widgets */
+.widget{background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:14px;margin:1.4rem -8px;font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+@media(min-width:900px){.widget.wide{margin-left:-120px;margin-right:-120px}}
+.widget h4{margin:0 0 .3rem;font-size:15px}
+.widget .sub{color:var(--muted);margin:0 0 .8rem}
+.ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:.4rem 0}
+.ctl label{color:var(--muted)}
+select,input[type=number],input[type=text],button{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--rule);border-radius:4px;padding:4px 7px}
+button{cursor:pointer}
+button.pri{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+button:disabled{opacity:.55;cursor:default}
+.grid2{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:760px){.grid2{grid-template-columns:minmax(300px,380px) 1fr}}
+svg{display:block;max-width:100%;height:auto;touch-action:none}
+.metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.m{border:1px solid var(--rule);border-radius:4px;padding:6px 8px}
+.m .k{color:var(--muted);font-size:12px}
+.m .v{font:600 17px/1.3 ui-monospace,Consolas,monospace}
+.m.hi{border-color:var(--accent);background:var(--accent-soft)}
+.coords input{width:72px}
+.coords td,.coords th{padding:2px 4px;text-align:center}
+.coords{font-size:13px;border-collapse:collapse}
+.note{color:var(--muted);font-size:12.5px}
+.warn{color:var(--warn)} .good{color:var(--good)}
+.status{min-height:1.4em;font-size:13px;color:var(--muted)}
+.decision{font-size:14px;margin:.4rem 0}
+footer{border-top:1px solid var(--rule);margin-top:3rem;padding:1.2rem 0 3rem;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<header class="top"><div class="bar">
+  <span class="badge">Preprint</span>
+  <span>
+    <a href="#explorer">Interactive explorer</a>
+    <a href="https://github.com/lunganlungpg/stage-aware-dsd-followup">Code &amp; data</a>
+    <a href="#cite">Cite</a>
+    <button id="themeBtn" aria-label="Toggle colour theme" style="margin-left:14px">◐</button>
+  </span>
+</div></header>
+
+<main class="wrap">
+<h1>Stage-aware follow-up designs for definitive screening experiments: exact criteria, rank completion and pooled-criterion bias</h1>
+<p class="authors">Lunganlung P G<sup>*</sup>, Prabhakar Verma</p>
+<p class="affil">Division of Agricultural Statistics, The Graduate School, ICAR-Indian Agricultural Research Institute, New Delhi 110012, India<br><sup>*</sup>Corresponding author</p>
+
+<div class="abstract">
+<b>Abstract.</b> A definitive screening design is often followed by a small second batch of runs on the factors that appear active, and the analysis of the combined data then includes a fixed stage effect. We study how these follow-up runs should be chosen. Profiling the unrestricted stage shift yields closed forms for the integrated variance of baseline prediction and of pairwise differences between factor settings, which are distinct design criteria. We give an index of stage confounding with an exact expression for the cost of fitting the stage effect, and an identity showing that a pooled contrast criterion overstates precision by a term governed by the directional leverage of the between-stage regressor displacement. When the projected screening design has rank deficiency $q$, we show that at least $q+1$ follow-up runs are needed to restore full rank and that $q+1$ runs suffice for suitably placed points. For computation, we derive a centred rank-two update for coordinate exchange, a trace lower bound and a convex-relaxation lower bound. In three screening projections, stage-aware selection reduced integrated excess prediction variance by 2.7–35.4% relative to selection by the unblocked criterion; in a rank-saturating case, pooled contrast selection chose a design whose stage-adjusted contrast variance was 64% higher than that of the stage-aware design.
+</div>
+<p class="kw"><b>Keywords:</b> Fixed block effect; I-optimality; Rank deficiency; Response surface; Sequential design; Sherman–Morrison identity &nbsp;·&nbsp; <b>MSC 2020:</b> 62K05; 62K20, 62K10</p>
+<p class="kw">This page is an interactive version of the manuscript. Every number in the tables can be recomputed in the browser from the stored designs, and with the Python and R packages in the <a href="https://github.com/lunganlungpg/stage-aware-dsd-followup">repository</a>.</p>
+
+<h2>1. Introduction</h2>
+<p>Definitive screening designs are three-level designs in which every linear main effect is estimated free of aliasing with second-order terms while some information on curvature is retained (Jones and Nachtsheim, 2011; Xiao et al., 2012). They are often used sequentially: many factors are screened, the few that appear active are selected (Jones and Nachtsheim, 2017), and further runs are added so that a full quadratic model in the selected factors can be fitted (Nachtsheim and Jones, 2018; Liu et al., 2023; Fidaleo et al., 2026).</p>
+<p>The added runs are usually performed later, as a separate batch, and a new batch can shift the level of the whole response surface. If the two batches are analysed together with a fixed stage effect, the design question is whether the follow-up runs should also be <em>chosen</em> with that stage effect in the model. A simple alternative is to choose them with an unblocked criterion and add the stage term only at analysis. The two approaches rank designs identically, up to a constant, when the regressor means of the two stages coincide, but a small follow-up batch from a definitive screening design rarely has this property.</p>
+<p>Optimal blocking of response surface designs with fixed or random block effects is well developed (Atkinson and Donev, 1989; Cook and Nachtsheim, 1989; Goos and Vandebroek, 2001; Goos and Donev, 2006; Goos and Jones, 2011), and blocking schemes exist for definitive screening designs and related three-level designs (Jones and Nachtsheim, 2016; Núñez Ares and Goos, 2023). Those results concern a design constructed in one step. Here the first stage is fixed, the second stage is small and the stage shift is unrestricted, so the questions are how many runs are needed and where to place them. We do not propose a new optimality principle; the I-criterion under a fixed block effect is standard (Atkinson et al., 2007). The contributions are exact results that make the follow-up decision transparent:</p>
+<ol class="contrib" type="i">
+<li>closed-form stage-adjusted criteria for two prediction targets, the absolute Stage 1 baseline mean and differences between factor settings (Proposition 1);</li>
+<li>a stage-confounding index with an exact expression for the cost of fitting the stage effect (Proposition 2), and an exact identity for the gap between pooled and stage-adjusted contrast precision that explains when selection by a pooled criterion fails (Proposition 3);</li>
+<li>the minimum number of follow-up runs that restores full rank, shown to be attainable (Theorem 1), and a run-count rule built on it;</li>
+<li>a centred rank-two update for coordinate exchange (Proposition 4), an analytic lower bound (Proposition 5) and a convex-relaxation lower bound (Theorem 2).</li>
+</ol>
+<p>Section 2 sets up the model and derives the criteria. Section 3 treats the number of runs and Section 4 the computation and bounds. Section 5 reports a numerical study on three screening projections, and Section 6 applies the results to a plant tissue-culture setting. Section 7 discusses limitations. Proofs are in Appendix A.</p>
+
+<h2>2. Model and stage-adjusted criteria</h2>
+<h3>2.1. Fixed-shift model</h3>
+<p>Let $m$ quantitative factors be screened by a Stage 1 definitive screening design with $n_1$ runs. Conditional on a selected subset of $k$ active factors, let $\mathbf f(\mathbf x)=(1,\mathbf z(\mathbf x)^{\mathsf T})^{\mathsf T}$, where $\mathbf z(\mathbf x)$ contains the $k$ linear terms, the $k$ pure quadratic terms and the $k(k-1)/2$ interactions, so the model has $p=(k+1)(k+2)/2$ parameters and $t=p-1$ non-intercept terms. For $n_2>0$ follow-up runs,</p>
+$$\mathbf Y_1=\mathbf F_1\boldsymbol\beta+\boldsymbol\varepsilon_1,\qquad \mathbf Y_2=\mathbf F_2\boldsymbol\beta+\mathbf 1_{n_2}\delta+\boldsymbol\varepsilon_2,\qquad \operatorname{Var}(\boldsymbol\varepsilon)=\sigma^2\mathbf I,\tag{1}$$
+<p>where $\mathbf F_j$ is the model matrix of stage $j$ and $\delta\in\mathbb R$ is an unrestricted stage shift. The Stage 1 baseline mean is $\mu_1(\mathbf x)=\mathbf f(\mathbf x)^{\mathsf T}\boldsymbol\beta$. Prediction is averaged over a probability measure $\chi$ on the region of interest; we take $\chi$ uniform on $[-1,1]^k$. Write</p>
+$$\boldsymbol\Omega=\mathrm E_\chi\{\mathbf f(\mathbf x)\mathbf f(\mathbf x)^{\mathsf T}\},\qquad \boldsymbol\mu_z=\mathrm E_\chi\{\mathbf z(\mathbf x)\},\qquad \mathbf V=\operatorname{Cov}_\chi\{\mathbf z(\mathbf x)\}.\tag{2}$$
+<p>These moments are exact on the cube ($\mathrm E x_j^a=0$ for odd $a$ and $1/(a+1)$ for even $a$) and are reproduced by three-point Gauss–Legendre quadrature in each coordinate.</p>
+<p>Let $\mathbf H_j=\mathbf I_{n_j}-\mathbf 1_{n_j}\mathbf 1_{n_j}^{\mathsf T}/n_j$, let $\mathbf Z_j$ be the non-intercept columns of $\mathbf F_j$, $\bar{\mathbf z}_j=\mathbf Z_j^{\mathsf T}\mathbf 1_{n_j}/n_j$, and</p>
+$$\mathbf M_a=\mathbf F_1^{\mathsf T}\mathbf F_1+\mathbf F_2^{\mathsf T}\mathbf H_2\mathbf F_2,\qquad \mathbf S_j=\mathbf Z_j^{\mathsf T}\mathbf H_j\mathbf Z_j,\qquad \mathbf S=\mathbf S_1+\mathbf S_2.\tag{3}$$
+<p>$\mathbf M_a$ is the information matrix for $\boldsymbol\beta$ after profiling out $\delta$, and $\mathbf S$ is the pooled within-stage scatter of the regressors. In words: $\mathbf F_1$ and $\mathbf F_2$ hold the quadratic model terms of the screening and follow-up runs; $\mathbf Z_j$ is $\mathbf F_j$ without its column of ones; $\bar{\mathbf z}_1$ and $\bar{\mathbf z}_2$ are the average regressor vectors of the two stages; $\mathbf S_j$ measures how much the regressors vary <em>within</em> stage $j$; and $\mathbf V$ and $\boldsymbol\mu_z$ describe how the regressors vary over the region where predictions are wanted. Because the stage shift is fitted, only within-stage variation carries information about the slope and curvature coefficients, which is why $\mathbf S$ rather than the total scatter appears in every criterion below.</p>
+
+<h3>2.2. Baseline prediction and pairwise comparison</h3>
+<div class="prop"><b>Proposition 1.</b> <i>Suppose $\mathbf M_a$ is nonsingular. Then, for every $\mathbf x$,</i>
+$$\frac{\operatorname{Var}\{\hat\mu_1(\mathbf x)\}}{\sigma^2}=\frac1{n_1}+\{\mathbf z(\mathbf x)-\bar{\mathbf z}_1\}^{\mathsf T}\mathbf S^{-1}\{\mathbf z(\mathbf x)-\bar{\mathbf z}_1\}.\tag{4}$$
+<i>Consequently, the integrated variance is</i>
+$$\Phi_I=\operatorname{tr}(\mathbf M_a^{-1}\boldsymbol\Omega)=\frac1{n_1}+\Psi,\qquad \Psi=\operatorname{tr}(\mathbf S^{-1}\mathbf Q),\qquad \mathbf Q=\mathbf V+(\boldsymbol\mu_z-\bar{\mathbf z}_1)(\boldsymbol\mu_z-\bar{\mathbf z}_1)^{\mathsf T},\tag{5}$$
+<i>and, for independent $\mathbf x,\mathbf x'\sim\chi$, the integrated variance of the estimated difference $\hat\mu_1(\mathbf x)-\hat\mu_1(\mathbf x')$ is</i>
+$$C=\mathrm E\,\frac{\operatorname{Var}\{\hat\mu_1(\mathbf x)-\hat\mu_1(\mathbf x')\}}{\sigma^2}=2\operatorname{tr}(\mathbf S^{-1}\mathbf V).\tag{6}$$
+</div>
+<p>The term $1/n_1$ does not depend on the follow-up runs, so for baseline prediction the design problem is to minimise the excess variance $\Psi$. The contrast criterion $C$ contains no intercept term. The two criteria differ by the rank-one term in $\mathbf Q$, which weights the direction $\boldsymbol\mu_z-\bar{\mathbf z}_1$ separating the Stage 1 regressor mean from the region average; their rankings of exact designs need not agree, and Section 5 shows that they can disagree.</p>
+
+<h3>2.3. Stage confounding and pooled criteria</h3>
+<p>Let $\mathbf F=[\mathbf F_1^{\mathsf T},\mathbf F_2^{\mathsf T}]^{\mathsf T}$, $\mathbf M_u=\mathbf F^{\mathsf T}\mathbf F$, $\mathbf P_F=\mathbf F\mathbf M_u^{-1}\mathbf F^{\mathsf T}$, $\mathbf s=(\mathbf 0_{n_1}^{\mathsf T},\mathbf 1_{n_2}^{\mathsf T})^{\mathsf T}$ and $\bar{\mathbf f}_2=\mathbf F_2^{\mathsf T}\mathbf 1_{n_2}/n_2$. The unblocked I-criterion is $I_u=\operatorname{tr}(\mathbf M_u^{-1}\boldsymbol\Omega)$.</p>
+<div class="prop"><b>Proposition 2.</b> <i>Suppose $\mathbf M_u$ is nonsingular and define the stage-confounding index</i>
+$$h=n_2\,\bar{\mathbf f}_2^{\mathsf T}\mathbf M_u^{-1}\bar{\mathbf f}_2=\frac{\mathbf s^{\mathsf T}\mathbf P_F\mathbf s}{\mathbf s^{\mathsf T}\mathbf s}.\tag{7}$$
+<i>Then $0&lt;h\le1$; $\mathbf M_a$ is singular if and only if $h=1$; and if $h&lt;1$,</i>
+$$\operatorname{tr}(\mathbf M_a^{-1}\boldsymbol\Omega)-\operatorname{tr}(\mathbf M_u^{-1}\boldsymbol\Omega)=\frac{n_2}{1-h}\,\bar{\mathbf f}_2^{\mathsf T}\mathbf M_u^{-1}\boldsymbol\Omega\mathbf M_u^{-1}\bar{\mathbf f}_2\;\ge0.\tag{8}$$
+</div>
+<p>The index $h$ is the squared cosine between the stage indicator and the column space of $\mathbf F$. A stage-aware policy chooses the follow-up runs that minimise $\Psi$; a stage-naive policy minimises $I_u$ and fits the stage effect at analysis, so its selected design is judged by $\Psi$. Both policies search the same designs; they differ only in how candidates are ranked. Expression (8) shows that the naive ranking is distorted by a term that is large when $h$ is close to one or when $\bar{\mathbf f}_2$ points towards poorly informed directions of $\mathbf M_u$.</p>
+<p>For contrasts, the matching pooled criterion is $C_u=2\operatorname{tr}(\mathbf S_{\rm pool}^{-1}\mathbf V)$, where $\mathbf S_{\rm pool}$ is the non-intercept information obtained by fitting a single common intercept.</p>
+<div class="prop"><b>Proposition 3.</b> <i>Let $\alpha=n_1n_2/(n_1+n_2)$ and $\boldsymbol\Delta=\bar{\mathbf z}_2-\bar{\mathbf z}_1$. Then</i>
+$$\mathbf S_{\rm pool}=\mathbf S+\alpha\,\boldsymbol\Delta\boldsymbol\Delta^{\mathsf T},\tag{9}$$
+<i>and, when $\mathbf S$ is nonsingular,</i>
+$$C-C_u=\frac{2\alpha\,\boldsymbol\Delta^{\mathsf T}\mathbf S^{-1}\mathbf V\mathbf S^{-1}\boldsymbol\Delta}{1+\alpha\,\boldsymbol\Delta^{\mathsf T}\mathbf S^{-1}\boldsymbol\Delta}\;\ge0.\tag{10}$$
+</div>
+<p>The pooled criterion credits the between-stage separation $\alpha\boldsymbol\Delta\boldsymbol\Delta^{\mathsf T}$, which is real information only if $\delta=0$. By (10), the size of the overstatement depends on how $\boldsymbol\Delta$ is oriented relative to weakly informed directions of $\mathbf S$, not only on $\lVert\boldsymbol\Delta\rVert$. The directional leverage $\boldsymbol\Delta^{\mathsf T}\mathbf S^{-1}\boldsymbol\Delta$ is therefore the natural diagnostic: when it is large, the numerator of (10) is large relative to $\lVert\boldsymbol\Delta\rVert^2$, and a design ranked first by $C_u$ can be poor under the stage-adjusted analysis.</p>
+
+<!-- ======================= EXPLORER ======================= -->
+<section class="widget wide" id="explorer">
+  <h4>Interactive explorer: place the follow-up runs yourself</h4>
+  <p class="sub">Every quantity in Propositions 1–3 and Theorem 1 is recomputed in your browser whenever a run moves. Drag the filled points or edit their coordinates. Shading shows the baseline prediction variance (4) on the plotted slice, with the other active factors held at 0.</p>
+  <div class="ctl">
+    <label for="scen">Scenario</label>
+    <select id="scen">
+      <option value="6,3,4">(m,k,n₂) = (6,3,4) · full rank, tissue culture</option>
+      <option value="8,4,6">(8,4,6) · q = 2</option>
+      <option value="10,4,4">(10,4,4) · q = 3, rank-saturating</option>
+      <option value="custom">Custom projection…</option>
+    </select>
+    <span id="customBox" hidden>
+      <label for="cm">m</label><select id="cm"></select>
+      <label for="cact">active</label><input id="cact" type="text" value="1,2,3" size="9" aria-label="Active factors, comma separated">
+      <label for="cn2">n₂</label><input id="cn2" type="number" min="2" max="12" value="4" style="width:56px">
+      <button id="capply">Apply</button>
+    </span>
+  </div>
+  <div class="ctl">
+    <label for="preset">Load design</label>
+    <select id="preset"></select>
+    <button id="opt-psi" class="pri">Optimise Ψ (stage-aware)</button>
+    <button id="opt-C">Optimise C</button>
+    <button id="opt-Iu">Optimise I<sub>u</sub> (stage-naive)</button>
+    <label for="nstart">starts</label><input id="nstart" type="number" min="1" max="200" value="12" style="width:60px">
+  </div>
+  <div class="status" id="status"></div>
+  <div class="grid2">
+    <div>
+      <div class="ctl"><label for="ax">horizontal</label><select id="ax"></select><label for="ay">vertical</label><select id="ay"></select></div>
+      <svg id="plot" viewBox="0 0 340 340" role="img" aria-label="Projection of the screening design and follow-up runs"></svg>
+      <p class="note">○ projected screening runs (number = multiplicity on this slice) · ● follow-up runs</p>
+    </div>
+    <div>
+      <div class="metrics" id="metrics"></div>
+      <p class="note" id="verdict"></p>
+      <div class="tscroll"><table class="coords" id="coords"></table></div>
+      <div class="ctl"><button id="copy">Copy design as CSV</button><span class="note" id="copied"></span></div>
+    </div>
+  </div>
+</section>
+
+<h2>3. Number of follow-up runs</h2>
+<p>Let $r_1=\operatorname{rank}(\mathbf F_1)$ and $q=p-r_1$ be the rank deficiency of the projected screening design.</p>
+<div class="prop"><b>Theorem 1.</b> <i>Let $n_2\ge1$. If $q&gt;0$ and $\operatorname{rank}(\mathbf M_a)=p$, then $n_2\ge q+1$. Conversely, if the region of interest has nonempty interior, there exist $q+1$ follow-up points, one of which may be any Stage 1 design point, for which $\operatorname{rank}(\mathbf M_a)=p$.</i></div>
+<p>Theorem 1 concerns rank only; it gives neither efficiency nor lack-of-fit guarantees. Its attainability part needs only a region with nonempty interior, so it continues to hold under linear or nonlinear inequality constraints such as safety limits on temperature or pressure. Attainability with $q+1$ runs can fail when follow-up runs must come from a finite candidate set, or when the region has empty interior in the coded factors, as with mixture constraints, where the model itself must be reparametrised. In those cases more than $q+1$ runs may be required, and the minimum should be found by checking $\operatorname{rank}(\mathbf M_a)$ directly on the feasible candidates. The residual degrees of freedom also depend on $n_2$. With $n_2=0$ no stage parameter is fitted and, if $r_1=p$, there are $n_1-p$ residual degrees of freedom. With $n_2=1$, $\mathbf H_2=\mathbf 0$, so $\mathbf M_a=\mathbf F_1^{\mathsf T}\mathbf F_1$: a single follow-up run only estimates its own stage shift and adds neither information nor a residual degree of freedom. For $n_2\ge2$ and $\operatorname{rank}(\mathbf M_a)=p$ there are $n_1+n_2-p-1$ residual degrees of freedom. The useful counts are therefore $n_2=0$ (only when $q=0$) and $n_2\in\{\max(2,q+1),\dots,n_{2,\max}\}$.</p>
+<p>These facts lead to a simple planning rule. Given a minimum number of residual degrees of freedom $d_{\min}$ and a tolerance $\varepsilon$, choose the smallest useful $n_2$ for which the best design found has full rank, at least $d_{\min}$ residual degrees of freedom and $\Psi\le\varepsilon$. A target fractional reduction $\gamma$ from an estimable Stage 1 design corresponds to $\varepsilon=(1-\gamma)\Psi(0)$, and a target root-mean-square prediction standard error $r\sigma$ over $\chi$ corresponds to $\varepsilon=r^2-1/n_1$. If contrasts are the primary target, the rule is applied to $C$. The rule does not replace a separate requirement for pure-error replication (Gilmour and Trinca, 2012).</p>
+
+<h2>4. Computation and lower bounds</h2>
+<h3>4.1. Coordinate exchange with a centred rank-two update</h3>
+<p>We minimise $\Psi$ (or $C$) by coordinate exchange (Meyer and Nachtsheim, 1995). Each coordinate of each follow-up run is evaluated on nine equally spaced values in $[-1,1]$; the three best brackets are refined by bounded Brent minimisation (Brent, 1973); and a change is accepted after direct re-evaluation. Sweeps are repeated until the improvement falls below $10^{-9}$ or 25 sweeps are reached. Each candidate evaluation is cheap because of the following update.</p>
+<div class="prop"><b>Proposition 4.</b> <i>Let one Stage 2 regressor row change from $\mathbf a$ to $\mathbf b$, and let $\mathbf u=\mathbf a-\bar{\mathbf z}_2$, $\mathbf v=\mathbf b-\mathbf a$ and $\mathbf U=[\mathbf u,\mathbf v]$, with $\bar{\mathbf z}_2$ the Stage 2 mean before the change. Then</i>
+$$\mathbf S_{\rm new}=\mathbf S+\mathbf U\mathbf K\mathbf U^{\mathsf T},\qquad \mathbf K=\begin{bmatrix}0&1\\1&1-1/n_2\end{bmatrix},\tag{11}$$
+<i>and, if $\mathbf S$ and $\mathbf S_{\rm new}$ are nonsingular and $\mathbf W=\mathbf S^{-1}\mathbf Q\mathbf S^{-1}$,</i>
+$$\Psi_{\rm new}=\Psi-\operatorname{tr}\{(\mathbf K^{-1}+\mathbf U^{\mathsf T}\mathbf S^{-1}\mathbf U)^{-1}\mathbf U^{\mathsf T}\mathbf W\mathbf U\}.\tag{12}$$
+</div>
+<p>With $\mathbf S^{-1}$ and $\mathbf W$ cached, each candidate requires one $2\times2$ solve. The same update holds for $C$ with $\mathbf V$ in place of $\mathbf Q$. Because the intercept is removed by centring, the update acts on the $t\times t$ matrix $\mathbf S$ rather than on $\mathbf M_a$.</p>
+<h3>4.2. Lower bounds</h3>
+<p>Local search gives no guarantee of optimality, so we give two lower bounds for the optimal exact value $\Psi^*_{\rm exact}$ at a fixed $n_2$.</p>
+<div class="prop"><b>Proposition 5.</b> <i>For every exact design with $n_2$ follow-up runs on $[-1,1]^k$,</i>
+$$\Psi\;\ge\;\frac{\{\operatorname{tr}(\mathbf Q^{1/2})\}^2}{\operatorname{tr}(\mathbf S_1)+n_2(t-3k/4)}.\tag{13}$$</div>
+<p>A sharper bound follows from relaxing the Stage 2 design to a probability measure. For a probability measure $\pi$ on $[-1,1]^k$ put $\mathbf S(\pi)=\mathbf S_1+n_2\operatorname{Cov}_\pi\{\mathbf z(\mathbf x)\}$ and $\Psi(\pi)=\operatorname{tr}\{\mathbf S(\pi)^{-1}\mathbf Q\}$, with $\Psi(\pi)=\infty$ if $\mathbf S(\pi)$ is singular. An exact design corresponds to its empirical measure, so $\Psi^*_{\rm exact}\ge\inf_\nu\Psi(\nu)$.</p>
+<div class="prop"><b>Theorem 2.</b> <i>The function $\pi\mapsto\Psi(\pi)$ is convex. If $\mathbf S(\pi)$ is nonsingular and $d_\pi(\mathbf x)=\{\mathbf z(\mathbf x)-\mathrm E_\pi\mathbf z\}^{\mathsf T}\mathbf S(\pi)^{-1}\mathbf Q\mathbf S(\pi)^{-1}\{\mathbf z(\mathbf x)-\mathrm E_\pi\mathbf z\}$, then</i>
+$$\Psi^*_{\rm exact}\;\ge\;\inf_\nu\Psi(\nu)\;\ge\;\Psi(\pi)-n_2\Big\{\sup_{\mathbf x\in[-1,1]^k}d_\pi(\mathbf x)-\mathrm E_\pi d_\pi(\mathbf x)\Big\}.\tag{14}$$</div>
+<p>Bound (14) has the form familiar from equivalence theorems (Pukelsheim, 1993): it is tight when $\pi$ is optimal for the relaxed problem, in which case the supremum of $d_\pi$ equals its $\pi$-average. To use it, the supremum over the continuous cube must be bounded above, not approximated on a grid. In Section 5 we bound it with tensor-product Bernstein coefficients on subboxes evaluated in floating-point arithmetic; the resulting numerical bound has not been certified with outward-rounded interval arithmetic.</p>
+
+<h2>5. Numerical study</h2>
+<h3>5.1. Design of the study</h3>
+<p>Stage 1 designs were conference-matrix definitive screening designs (Xiao et al., 2012), with one column deleted for odd $m$. Three scenarios, $(m,k,n_2)=(6,3,4)$, $(8,4,6)$ and $(10,4,4)$ with active subsets $\{1,\dots,k\}$, were studied. They were chosen during method development and are illustrative, not a random sample of projections, but they span the three rank situations that Theorem 1 distinguishes. In $(6,3,4)$ the projection has full rank, as every three-factor projection does for $m\ge5$, so rank plays no part in the comparison. In $(8,4,6)$ the projection has $q=2$, which is the more common of the two rank classes for four-factor projections of the eight-factor design (42 of 70 projections), and the follow-up batch exceeds the minimum $q+1=3$. In $(10,4,4)$ the projection has $q=3$, the more severe of the two classes for the ten-factor design (30 of 210 projections; the other 180 have $q=1$), and $n_2=q+1$ sits exactly at the rank-saturating boundary. Results for the remaining rank classes and for other subsets may differ (Supplementary Table S6).</p>
+<p>For baseline prediction, coordinate-exchange searches minimising $\Psi$ (stage-aware) and $I_u$ (stage-naive) were each run from 200 random starts per scenario, and each policy selected the terminal design best under its own criterion. To separate the effect of the ranking criterion from that of the candidates the search produced, all 200 naive terminal designs were also re-evaluated under $\Psi$ and the best recorded. This <em>same-pool best</em> uses information that a practitioner ranking by $I_u$ would not have; it is a diagnostic, not a competing method. Run-count trajectories used 200 stage-aware starts for every estimable $n_2$; in all, 13 search settings and 2,600 starts were run.</p>
+<p>For contrasts, a matched study selected designs by $C$ (stage-aware) or $C_u$ (pooled), using the same 80 random initial designs for both policies in each scenario and the same bound-constrained L-BFGS-B optimiser (Byrd et al., 1995) with analytic gradients, at most 450 iterations and identical tolerances. All selected designs were evaluated under the stage-adjusted $C$.</p>
+<p>Computations used Python with NumPy and SciPy (Harris et al., 2020; Virtanen et al., 2020). The criteria of every selected design were recomputed from the stored coordinates with a second, independently written implementation, which also verified identity (10) numerically; all values agreed to the reported precision. Reductions are reported as $100(\Psi_{\rm comparator}-\Psi_{\rm aware})/\Psi_{\rm comparator}$, and analogously for $C$.</p>
+
+<h3>5.2. Baseline prediction</h3>
+<p>Table 1 compares the policies. Stage-aware selection reduced $\Psi$ by 35.4%, 14.8% and 2.7%, and in each scenario the stage-aware design had the smaller confounding index $h$. The source of the naive loss differs between scenarios. In $(6,3,4)$, 19 of the 200 naive terminal designs had $\Psi&lt;0.40$, but the one with the smallest $I_u$ had $\Psi=0.552$; the Spearman correlation between $I_u$ and $\Psi$ over this pool was only 0.17, and choosing the pool's best member would have reduced the gap from 35.4% to 9.6%. Most of the loss therefore came from ranking by the wrong criterion. In $(8,4,6)$ and $(10,4,4)$ the best member of the naive pool was within $10^{-5}$ of the naive-selected design: these pools contained no design near the stage-aware result, although this does not prove that such designs are unreachable by the naive search.</p>
+<p class="cap"><b>Table 1</b> Baseline prediction: designs selected by $\Psi$ (aware) and by $I_u$ (naive), both evaluated under $\Psi$ (200 starts per policy). The two percentage columns give the reduction in $\Psi$ achieved by the aware design relative to the naive-selected design and to the best of the 200 naive terminal designs. <span id="t1check" class="note"></span></p>
+<div class="tscroll"><table class="t" id="table1">
+<tr><th>$(m,k,n_2)$</th><th>$n_1$</th><th>$r_1$</th><th>$q$</th><th>$\Psi$ aware</th><th>$\Psi$ naive-selected</th><th>$\Psi$ same-pool best</th><th>vs naive (%)</th><th>vs pool best (%)</th><th>$h$ aware</th><th>$h$ naive</th></tr>
+<tr><td>(6,3,4)</td><td>13</td><td>10</td><td>0</td><td>0.3566</td><td>0.5518</td><td>0.3943</td><td>35.36</td><td>9.55</td><td>0.494</td><td>0.686</td></tr>
+<tr><td>(8,4,6)</td><td>17</td><td>13</td><td>2</td><td>0.4538</td><td>0.5326</td><td>0.5326</td><td>14.79</td><td>14.79</td><td>0.476</td><td>0.672</td></tr>
+<tr><td>(10,4,4)</td><td>21</td><td>12</td><td>3</td><td>0.7049</td><td>0.7246</td><td>0.7246</td><td>2.72</td><td>2.72</td><td>0.460</td><td>0.638</td></tr>
+</table></div>
+<p>In $(10,4,4)$ the projected screening design has rank 12 of $p=15$, so by Theorem 1 at least four follow-up runs are needed and the chosen $n_2=4$ lies exactly on the boundary $n_2-1=q$. Searches at this boundary reached the sweep limit more often (58 of 200 aware and 74 of 200 naive starts, against 2 of 400 in $(6,3,4)$). Over all 2,600 starts, 2,393 met the tolerance and 207 stopped at the sweep limit; none failed numerically, and in all 13 settings the selected start met the tolerance (Supplementary Tables S1–S2).</p>
+
+<h3>5.3. Pairwise comparison</h3>
+<p>The left block of Table 2 evaluates the designs of Table 1 under $C$: the stage-aware baseline designs also gave more precise contrasts, by 7.7%, 2.3% and 5.3%. The relative gain is smaller than for $\Psi$ in the first two scenarios and larger in the third, so removing the $1/n_1$ term from the criterion does not by itself enlarge relative gains; the two criteria weight directions differently through $\mathbf Q$ and $\mathbf V$.</p>
+<p class="cap"><b>Table 2</b> Contrast variance $C$ under the stage-adjusted analysis. Left: designs of Table 1. Right: matched 80-start study selecting by $C$ (aware) or by the pooled $C_u$; the last two columns give $\Psi$ for these designs. <span id="t2check" class="note"></span></p>
+<div class="tscroll"><table class="t" id="table2">
+<tr><th>$(m,k,n_2)$</th><th>$C$, $\Psi$-aware</th><th>$C$, $I_u$-selected</th><th>Red. (%)</th><th>$C$, $C$-aware</th><th>$C$, $C_u$-selected</th><th>Red. (%)</th><th>$\Psi$, $C$-aware</th><th>$\Psi$, $C_u$-selected</th></tr>
+<tr><td>(6,3,4)</td><td>0.5161</td><td>0.5589</td><td>7.67</td><td>0.4501</td><td>0.4518</td><td>0.37</td><td>0.4193</td><td>0.4220</td></tr>
+<tr><td>(8,4,6)</td><td>0.5698</td><td>0.5832</td><td>2.30</td><td>0.5201</td><td>0.5282</td><td>1.54</td><td>0.5721</td><td>0.5973</td></tr>
+<tr><td>(10,4,4)</td><td>0.6984</td><td>0.7378</td><td>5.34</td><td>0.6984</td><td>1.1452</td><td>39.01</td><td>0.7049</td><td>0.9282</td></tr>
+</table></div>
+<p>In the matched study (right block), the policies differed by only 0.37% and 1.54% in $(6,3,4)$ and $(8,4,6)$, too little to interpret beyond these search budgets. In $(10,4,4)$ the design ranked first by $C_u$ had adjusted $C=1.145$, against 0.698 for the stage-aware design: the stage-aware design has 39.0% lower contrast variance, or equivalently the pooled choice is 64% higher. This reflects the single design that $C_u$ ranked first, not the typical pooled search: among the 80 pooled terminal designs the median adjusted $C$ was 0.704, 58 were within 2% of the stage-aware value, and the best was 0.54% above it. Two pooled terminal designs were not estimable under the stage-adjusted model and five more had adjusted $C&gt;2$, although every optimiser call reported successful termination (Supplementary Table S3).</p>
+<p>Choosing the wrong estimand has a cost. In $(6,3,4)$ the contrast-optimal design lowered $C$ from 0.516 to 0.450 (12.8%) relative to the baseline-optimal design but raised $\Psi$ from 0.357 to 0.419 (17.6%). In $(10,4,4)$ the two criteria led to the same local design: the $C$-aware and $\Psi$-aware designs agreed in both criteria to six decimal places and, after a signed permutation of factors, to within a root-mean-square coded difference of 0.001. Same-pool re-ranking also depends on the estimand: in the $(6,3,4)$ naive pool, re-ranking by $\Psi$ recovers 28.5 of 35.4 percentage points of loss, whereas re-ranking by $C$ recovers 1.6 of 7.7 (Supplementary Tables S4–S5).</p>
+
+<h3>5.4. The rank-saturating case</h3>
+<p>Proposition 3 explains the $(10,4,4)$ result. The stage-aware and $C_u$-selected designs have similar stage-mean displacements, $\lVert\boldsymbol\Delta\rVert=1.078$ and $1.045$. However, the smallest eigenvalue of $\mathbf S$ falls from 1.371 to 0.306 and the directional leverage $\boldsymbol\Delta^{\mathsf T}\mathbf S^{-1}\boldsymbol\Delta$ rises from 0.165 to 1.709, so the penalty (10) is 0.502 for the $C_u$-selected design against 0.021 for the stage-aware design. The pooled criterion credits a displacement lying along a weakly informed direction of $\mathbf S$; once $\delta$ is fitted, that information is lost. At the boundary $n_2-1=q$ every follow-up direction is needed for estimability, which makes such misplacement costly, although the boundary does not by itself force a large penalty. <a href="#explorer" data-load="10,4,4|Cu_pooled">Load the $C_u$-selected design in the explorer</a> and compare with <a href="#explorer" data-load="10,4,4|C_aware">the stage-aware design</a>.</p>
+
+<h3>5.5. Projection ranks, bounds and distance constraints</h3>
+<p>Theorem 1 matters because rank deficiency is common for four-factor projections. Over conference-matrix designs with $m=5,\dots,14$, no four-factor projection supports the full quadratic model when $m\le10$; the full-rank proportions are 110/330 and 165/495 for $m=11,12$ and 520/715 and 728/1001 for $m=13,14$, whereas every three-factor projection has full rank (Supplementary Table S6; see also Jones and Nachtsheim, 2011).</p>
+
+<section class="widget" id="rankaudit">
+  <h4>Exhaustive projection-rank audit</h4>
+  <p class="sub">Builds each conference-matrix DSD for $m=5,\dots,14$ and computes $\operatorname{rank}(\mathbf F_1)$ for every three- and four-factor projection (3,300 projections in total), with the minimum follow-up size $q+1$ from Theorem 1.</p>
+  <button id="runAudit" class="pri">Run audit in browser</button>
+  <div class="tscroll" id="auditOut"></div>
+</section>
+
+<p>For $(6,3,4)$ the best-found $\Psi=0.3566$; Proposition 5 gives 0.1949. Applying Theorem 2 with $\pi$ the best continuous-weight design on an $11^3$ grid gives $\Psi(\pi)=0.3331$, and bounding the supremum over the cube with the Bernstein envelope gives the lower bound 0.3327. The best-found exact design is therefore at most 7.2% above the optimum, subject to the floating-point caveat of Section 4.2.</p>
+<p>Requiring a minimum Euclidean separation between follow-up runs changed little: with 15 feasible sequential least-squares programming searches per level, the best $\Psi$ in $(6,3,4)$ rose by 0.60% for separation 1.0 and 0.66% for separation 1.5.</p>
+
+<h2>6. Illustration: follow-up of a tissue-culture screening experiment</h2>
+<p>Consider the optimisation of a shoot-regeneration medium in which six medium and culture factors are screened with the 13-run definitive screening design. Suppose the screening analysis points to sucrose (15–35 g/L), 6-benzylaminopurine (BAP, 0.25–1.75 mg/L) and naphthaleneacetic acid (NAA, 0.05–0.55 mg/L), and that further cultures will be initiated as a second batch. This is scenario $(6,3,4)$; the factor ranges are illustrative and no response data are analysed.</p>
+<p>Because $r_1=p=10$, Theorem 1 imposes no minimum, but a single follow-up run is useless. Figure 1 shows the best-found $\Psi$ against $n_2$. With $d_{\min}=3$, the tolerance $\varepsilon=0.40$ is first met with three runs; a 40% reduction from $\Psi(0)=0.6237$ ($\varepsilon=0.3742$) requires four; and a root-mean-square prediction standard error of $0.70\sigma$ ($\varepsilon=0.49-1/13=0.4131$) requires three. For the four-factor projection $(8,4)$, where Theorem 1 requires $n_2\ge3$, the tolerance $\varepsilon=0.50$ is first met at $n_2=6$. These decisions rest on best-found designs and are not proofs of minimal run count.</p>
+
+<section class="widget" id="fig1">
+  <h4>Fig. 1 (interactive): run-count planning rule</h4>
+  <p class="sub">Best-found excess integrated variance $\Psi$ against the number of follow-up runs for the three-factor projection of the six-factor design ($n_1=13$, solid) and the four-factor projection of the eight-factor design ($n_1=17$, dashed), 200 stage-aware starts per point. Move the tolerance to apply the rule of Section 3.</p>
+  <div class="ctl">
+    <label for="eps">tolerance ε</label><input id="eps" type="range" min="0.28" max="0.72" step="0.0001" value="0.40" style="width:200px"><span id="epsv" style="font-family:ui-monospace,monospace"></span>
+    <label for="dmin">d<sub>min</sub></label><input id="dmin" type="number" min="0" max="10" value="3" style="width:56px">
+  </div>
+  <div class="ctl">
+    <span class="note">presets:</span>
+    <button data-eps="0.40">ε = 0.40</button>
+    <button data-eps="0.3742">40% reduction (0.3742)</button>
+    <button data-eps="0.4131">RMS SE 0.70σ (0.4131)</button>
+    <button data-eps="0.50">ε = 0.50</button>
+  </div>
+  <svg id="fig1svg" viewBox="0 0 560 300" role="img" aria-label="Best-found Psi against number of follow-up runs"></svg>
+  <p class="decision" id="decision"></p>
+</section>
+
+<p>Table 3 lists the four selected runs for each target and Fig. 2 shows them with the screening design. The baseline design uses two opposite corners and two centre runs, so contrasting corners with the centre informs the pure quadratic terms; the contrast design spreads its runs over three points near edge midpoints and one corner. The stored baseline design has two <em>near</em>-centre runs, with all coordinates within $5\times10^{-5}$ of zero. Replacing them by exact centre runs changes $\Psi$ by less than $6\times10^{-11}$, reduces the rank of the centred Stage 2 scatter from three to two (the third direction carried almost no information), and yields one pure-error degree of freedom; we recommend the exact-centre version. The contrast design reduces $C$ by 12.8% but increases $\Psi$ by 17.6%. On the response scale, with an illustrative $\hat\sigma=1.25$, the root-mean-square standard error of baseline prediction, $\hat\sigma(1/n_1+\Psi)^{1/2}$, is about 0.82 for the stage-aware design and 0.99 for the design ranked first by $I_u$.</p>
+<p class="cap"><b>Table 3</b> Four-run follow-up batches for the tissue-culture illustration, in coded and natural units (sucrose, g/L; BAP and NAA, mg/L). Coordinates are rounded to three decimals. <a href="#explorer" data-load="6,3,4|psi_exact">Open the baseline design</a> · <a href="#explorer" data-load="6,3,4|C_aware">open the contrast design</a>.</p>
+<div class="tscroll"><table class="t">
+<tr><th>Run</th><th>Target</th><th>$x_1$</th><th>$x_2$</th><th>$x_3$</th><th>Sucrose</th><th>BAP</th><th>NAA</th></tr>
+<tr><td>1</td><td>Baseline ($\Psi$)</td><td>1</td><td>1</td><td>1</td><td>35.0</td><td>1.75</td><td>0.55</td></tr>
+<tr><td>2</td><td>Baseline ($\Psi$)</td><td>0</td><td>0</td><td>0</td><td>25.0</td><td>1.00</td><td>0.30</td></tr>
+<tr><td>3</td><td>Baseline ($\Psi$)</td><td>0</td><td>0</td><td>0</td><td>25.0</td><td>1.00</td><td>0.30</td></tr>
+<tr><td>4</td><td>Baseline ($\Psi$)</td><td>−1</td><td>−1</td><td>−1</td><td>15.0</td><td>0.25</td><td>0.05</td></tr>
+<tr><td>1</td><td>Contrast ($C$)</td><td>1</td><td>−1</td><td>−0.005</td><td>35.0</td><td>0.25</td><td>0.30</td></tr>
+<tr><td>2</td><td>Contrast ($C$)</td><td>−0.005</td><td>1</td><td>−1</td><td>25.0</td><td>1.75</td><td>0.05</td></tr>
+<tr><td>3</td><td>Contrast ($C$)</td><td>−1</td><td>−1</td><td>−1</td><td>15.0</td><td>0.25</td><td>0.05</td></tr>
+<tr><td>4</td><td>Contrast ($C$)</td><td>−1</td><td>−0.005</td><td>1</td><td>15.0</td><td>1.00</td><td>0.55</td></tr>
+</table></div>
+<p class="note">Fig. 2 of the manuscript (the two designs plotted with the projected screening design) is reproduced by the explorer above: choose the (6,3,4) scenario and switch the plotted axes.</p>
+
+<h2>7. Discussion</h2>
+<p>The results show that the criterion used to select follow-up runs should match both the analysis that will be fitted and the quantity to be estimated. Ranking candidates by an unblocked criterion and fitting the stage effect afterwards can select a design that is much worse under that analysis; Propositions 2 and 3 identify the terms responsible. In the full-rank scenario most of the loss came from the ranking criterion rather than from the candidates the search produced: re-ranking the same naive pool by $\Psi$ recovered 28.5 of the 35.4 percentage points. Using the stage-adjusted criterion in the search is therefore the main remedy, not more search effort. A design chosen for absolute prediction is not automatically good for comparing settings, and conversely; locating a response optimum would require yet another criterion. In practice we suggest choosing the target ($\Psi$ or $C$) first, computing $q$ and applying Theorem 1, using the run-count rule of Section 3, and inspecting $h$ and $\boldsymbol\Delta^{\mathsf T}\mathbf S^{-1}\boldsymbol\Delta$ for the selected design.</p>
+<p>The results are conditional on the selected active factors. Holding omitted factors at their centre in Stage 2 removes their interactions with active factors within that stage but cannot remove omitted-variable bias from Stage 1 or recover a factor wrongly declared inactive. Stage-specific slopes, heteroscedastic errors or a constrained region would change $\mathbf M_a$ and the candidate set; for a spherical region $\lVert\mathbf x\rVert^2\le c$, corners are excluded only if $c&lt;k$. Treating the stage effect as random (Goos and Vandebroek, 2001) gives a family of criteria with the pooled and fixed-effect criteria as limiting cases and is a natural extension, as is extending Theorem 1 to several follow-up batches.</p>
+<p>The numerical evidence has clear limits. It covers three active subsets chosen during development; the searches are local with finite budgets, so best-found values are not certified optima; there is no matched reproduction of the axial augmentation of Liu et al. (2023), whose objective does not include an unrestricted stage shift; robustness to model misspecification was not studied by simulation; and the Bernstein bound is numerical rather than interval-certified. A broader study over many projections with independent seeds would strengthen the empirical conclusions.</p>
+
+<h2>Appendix A. Proofs</h2>
+<details><summary>Proof of Proposition 1</summary>
+<p>Profiling $\delta$ in (1) replaces $\mathbf F_2$ by $\mathbf H_2\mathbf F_2$, which gives $\mathbf M_a$. Reparametrise with $\gamma_0=\beta_0+\bar{\mathbf z}_1^{\mathsf T}\boldsymbol\beta_z$, where $\boldsymbol\beta=(\beta_0,\boldsymbol\beta_z^{\mathsf T})^{\mathsf T}$. The Stage 1 rows become $(1,\{\mathbf z_i-\bar{\mathbf z}_1\}^{\mathsf T})$ and, because $\mathbf H_2\mathbf 1_{n_2}=\mathbf 0$, the profiled Stage 2 rows are $(0,\{\mathbf H_2\mathbf Z_2\}_i)$. The information matrix for $(\gamma_0,\boldsymbol\beta_z)$ is therefore block diagonal, $\operatorname{diag}(n_1,\mathbf S)$, since $\sum_i(\mathbf z_i-\bar{\mathbf z}_1)=\mathbf 0$. Hence $\hat\gamma_0$ and $\hat{\boldsymbol\beta}_z$ are uncorrelated with variances $\sigma^2/n_1$ and $\sigma^2\mathbf S^{-1}$, and $\mu_1(\mathbf x)=\gamma_0+\{\mathbf z(\mathbf x)-\bar{\mathbf z}_1\}^{\mathsf T}\boldsymbol\beta_z$ gives (4). Since (4) equals $\mathbf f(\mathbf x)^{\mathsf T}\mathbf M_a^{-1}\mathbf f(\mathbf x)$, averaging over $\chi$ gives $\operatorname{tr}(\mathbf M_a^{-1}\boldsymbol\Omega)=1/n_1+\mathrm E_\chi\{(\mathbf z-\bar{\mathbf z}_1)^{\mathsf T}\mathbf S^{-1}(\mathbf z-\bar{\mathbf z}_1)\}=1/n_1+\operatorname{tr}(\mathbf S^{-1}\mathbf Q)$, because $\mathrm E_\chi\{(\mathbf z-\bar{\mathbf z}_1)(\mathbf z-\bar{\mathbf z}_1)^{\mathsf T}\}=\mathbf Q$. For (6), $\hat\mu_1(\mathbf x)-\hat\mu_1(\mathbf x')=\{\mathbf z(\mathbf x)-\mathbf z(\mathbf x')\}^{\mathsf T}\hat{\boldsymbol\beta}_z$, whose variance is $\sigma^2\{\mathbf z(\mathbf x)-\mathbf z(\mathbf x')\}^{\mathsf T}\mathbf S^{-1}\{\mathbf z(\mathbf x)-\mathbf z(\mathbf x')\}$; for independent $\mathbf x,\mathbf x'\sim\chi$ the expectation of $\{\mathbf z(\mathbf x)-\mathbf z(\mathbf x')\}\{\mathbf z(\mathbf x)-\mathbf z(\mathbf x')\}^{\mathsf T}$ is $2\mathbf V$. $\square$</p></details>
+<details><summary>Proof of Proposition 2</summary>
+<p>Since $\mathbf F^{\mathsf T}\mathbf s=n_2\bar{\mathbf f}_2$ and $\mathbf s^{\mathsf T}\mathbf s=n_2$, the identity in (7) holds, and $h$ is a Rayleigh quotient of the orthogonal projector $\mathbf P_F$, so $h\le1$. Because the first entry of $\bar{\mathbf f}_2$ is 1 and $\mathbf M_u\succ0$, $h&gt;0$. Profiling $\delta$ gives $\mathbf M_a=\mathbf M_u-\mathbf F^{\mathsf T}\mathbf s(\mathbf s^{\mathsf T}\mathbf s)^{-1}\mathbf s^{\mathsf T}\mathbf F=\mathbf M_u-n_2\bar{\mathbf f}_2\bar{\mathbf f}_2^{\mathsf T}$, which agrees with (3). By the matrix determinant lemma, $\det\mathbf M_a=(1-h)\det\mathbf M_u$, so $\mathbf M_a$ is singular if and only if $h=1$. For $h&lt;1$ the Sherman–Morrison formula gives $\mathbf M_a^{-1}=\mathbf M_u^{-1}+n_2(1-h)^{-1}\mathbf M_u^{-1}\bar{\mathbf f}_2\bar{\mathbf f}_2^{\mathsf T}\mathbf M_u^{-1}$; multiplying by $\boldsymbol\Omega$ and taking traces gives (8), which is nonnegative because $\boldsymbol\Omega\succeq0$. $\square$</p></details>
+<details><summary>Proof of Proposition 3</summary>
+<p>With a common intercept, the non-intercept information is the total centred scatter of all $n_1+n_2$ regressor rows. The standard within/between decomposition gives $\mathbf S_1+\mathbf S_2+n_1(\bar{\mathbf z}_1-\bar{\mathbf z})(\bar{\mathbf z}_1-\bar{\mathbf z})^{\mathsf T}+n_2(\bar{\mathbf z}_2-\bar{\mathbf z})(\bar{\mathbf z}_2-\bar{\mathbf z})^{\mathsf T}$, where $\bar{\mathbf z}=(n_1\bar{\mathbf z}_1+n_2\bar{\mathbf z}_2)/(n_1+n_2)$; since $\bar{\mathbf z}_1-\bar{\mathbf z}=-n_2\boldsymbol\Delta/(n_1+n_2)$ and $\bar{\mathbf z}_2-\bar{\mathbf z}=n_1\boldsymbol\Delta/(n_1+n_2)$, the between term equals $\alpha\boldsymbol\Delta\boldsymbol\Delta^{\mathsf T}$, proving (9). By the Sherman–Morrison formula, $\mathbf S_{\rm pool}^{-1}=\mathbf S^{-1}-\alpha\mathbf S^{-1}\boldsymbol\Delta\boldsymbol\Delta^{\mathsf T}\mathbf S^{-1}/(1+\alpha\boldsymbol\Delta^{\mathsf T}\mathbf S^{-1}\boldsymbol\Delta)$, and $C-C_u=2\operatorname{tr}\{(\mathbf S^{-1}-\mathbf S_{\rm pool}^{-1})\mathbf V\}$ gives (10), which is nonnegative because $\mathbf V\succeq0$. $\square$</p></details>
+<details><summary>Proof of Theorem 1</summary>
+<p><em>Necessity.</em> Since $\operatorname{rank}(\mathbf H_2)=n_2-1$, $\operatorname{rank}(\mathbf M_a)\le\operatorname{rank}(\mathbf F_1)+\operatorname{rank}(\mathbf H_2\mathbf F_2)\le r_1+n_2-1$, so $\operatorname{rank}(\mathbf M_a)=p$ requires $n_2\ge q+1$. <em>Attainability.</em> If $q=0$, $\mathbf F_1$ already has full rank and any single follow-up point will do. Otherwise let the columns of $\mathbf V_\perp\in\mathbb R^{p\times q}$ form a basis of $\ker(\mathbf F_1)$ and set $\mathbf g(\mathbf x)=\mathbf V_\perp^{\mathsf T}\mathbf f(\mathbf x)$. For $\mathbf w\ne\mathbf 0$, $\mathbf w^{\mathsf T}\mathbf g(\mathbf x)=(\mathbf V_\perp\mathbf w)^{\mathsf T}\mathbf f(\mathbf x)$ is a nonzero polynomial, because the monomials in $\mathbf f$ are linearly independent functions; a nonzero polynomial cannot vanish identically on a set with nonempty interior. Hence the vectors $\mathbf g(\mathbf x)$ span $\mathbb R^q$, and there are points $\mathbf x_1,\dots,\mathbf x_q$ with $\mathbf g(\mathbf x_1),\dots,\mathbf g(\mathbf x_q)$ linearly independent. Take these as follow-up runs together with any Stage 1 design point $\mathbf x_0$, for which $\mathbf g(\mathbf x_0)=\mathbf 0$. Suppose $\mathbf M_a\mathbf c=\mathbf 0$. Then $\mathbf F_1\mathbf c=\mathbf 0$ and $\mathbf H_2\mathbf F_2\mathbf c=\mathbf 0$, so $\mathbf c=\mathbf V_\perp\mathbf w$ for some $\mathbf w$. Because the kernel of $\mathbf H_2$ is spanned by $\mathbf 1_{n_2}$, the second condition means $\mathbf F_2\mathbf V_\perp\mathbf w=\kappa\mathbf 1_{n_2}$ for some scalar $\kappa$; the $i$th entry of $\mathbf F_2\mathbf V_\perp\mathbf w$ is $\mathbf f(\mathbf x_i)^{\mathsf T}\mathbf V_\perp\mathbf w=\mathbf g(\mathbf x_i)^{\mathsf T}\mathbf w$. The entry for $\mathbf x_0$ gives $\kappa=\mathbf g(\mathbf x_0)^{\mathsf T}\mathbf w=0$, so $\mathbf g(\mathbf x_i)^{\mathsf T}\mathbf w=0$ for $i=1,\dots,q$ and $\mathbf w=\mathbf 0$. Thus $\mathbf M_a$ is nonsingular. $\square$</p></details>
+<details><summary>Proof of Proposition 4</summary>
+<p>Write $\mathbf S_2=\sum_i\mathbf z_i\mathbf z_i^{\mathsf T}-n_2\bar{\mathbf z}_2\bar{\mathbf z}_2^{\mathsf T}$. Replacing $\mathbf a$ by $\mathbf b=\mathbf a+\mathbf v$ changes the first term by $\mathbf b\mathbf b^{\mathsf T}-\mathbf a\mathbf a^{\mathsf T}=\mathbf a\mathbf v^{\mathsf T}+\mathbf v\mathbf a^{\mathsf T}+\mathbf v\mathbf v^{\mathsf T}$ and the mean to $\bar{\mathbf z}_2+\mathbf v/n_2$, so the second term changes by $-\bar{\mathbf z}_2\mathbf v^{\mathsf T}-\mathbf v\bar{\mathbf z}_2^{\mathsf T}-\mathbf v\mathbf v^{\mathsf T}/n_2$. The sum is $\mathbf u\mathbf v^{\mathsf T}+\mathbf v\mathbf u^{\mathsf T}+(1-1/n_2)\mathbf v\mathbf v^{\mathsf T}=\mathbf U\mathbf K\mathbf U^{\mathsf T}$, which is (11). Since $\det\mathbf K=-1$, $\mathbf K$ is invertible, and the Woodbury identity gives $\mathbf S_{\rm new}^{-1}=\mathbf S^{-1}-\mathbf S^{-1}\mathbf U(\mathbf K^{-1}+\mathbf U^{\mathsf T}\mathbf S^{-1}\mathbf U)^{-1}\mathbf U^{\mathsf T}\mathbf S^{-1}$, the middle inverse existing because $\mathbf S_{\rm new}$ is nonsingular. Multiplying by $\mathbf Q$, taking traces and using cyclicity gives (12). $\square$</p></details>
+<details><summary>Proof of Proposition 5</summary>
+<p>By the Cauchy–Schwarz inequality for the trace inner product with $\mathbf A=\mathbf S^{1/2}$ and $\mathbf B=\mathbf S^{-1/2}\mathbf Q^{1/2}$, $\{\operatorname{tr}(\mathbf Q^{1/2})\}^2=\{\operatorname{tr}(\mathbf A^{\mathsf T}\mathbf B)\}^2\le\operatorname{tr}(\mathbf S)\operatorname{tr}(\mathbf S^{-1}\mathbf Q)$. Further, $\operatorname{tr}(\mathbf S_2)=n_2\sum_js_j^2$, where $s_j^2$ is the empirical variance of regressor $j$ over the follow-up runs. A variable with range in an interval of length $L$ has variance at most $L^2/4$; the $k$ linear and $k(k-1)/2$ interaction regressors lie in $[-1,1]$ and the $k$ pure quadratic regressors in $[0,1]$, so $\sum_js_j^2\le k+k(k-1)/2+k/4=t-3k/4$. Combining the two inequalities gives (13). $\square$</p></details>
+<details><summary>Proof of Theorem 2</summary>
+<p>For measures $\pi,\nu$ and $\pi_\theta=(1-\theta)\pi+\theta\nu$, $\theta\in[0,1]$,
+$$\operatorname{Cov}_{\pi_\theta}(\mathbf z)=(1-\theta)\operatorname{Cov}_\pi(\mathbf z)+\theta\operatorname{Cov}_\nu(\mathbf z)+\theta(1-\theta)(\mathrm E_\pi\mathbf z-\mathrm E_\nu\mathbf z)(\mathrm E_\pi\mathbf z-\mathrm E_\nu\mathbf z)^{\mathsf T},$$
+so $\mathbf S(\pi_\theta)\succeq(1-\theta)\mathbf S(\pi)+\theta\mathbf S(\nu)$. If $\mathbf S(\pi)$ and $\mathbf S(\nu)$ are positive definite, the order-reversing property of the inverse and operator convexity of $\mathbf A\mapsto\mathbf A^{-1}$ on positive definite matrices (Bhatia, 1997) give $\mathbf S(\pi_\theta)^{-1}\preceq(1-\theta)\mathbf S(\pi)^{-1}+\theta\mathbf S(\nu)^{-1}$; multiplying by $\mathbf Q^{1/2}$ on both sides and taking traces shows that $\Psi$ is convex, and the inequality is trivial if either value is infinite. Differentiating at $\theta=0$, $\partial\mathbf S(\pi_\theta)/\partial\theta=n_2[\mathrm E_\nu\{(\mathbf z-\mathrm E_\pi\mathbf z)(\mathbf z-\mathrm E_\pi\mathbf z)^{\mathsf T}\}-\operatorname{Cov}_\pi(\mathbf z)]$, so the directional derivative of $\Psi$ at $\pi$ towards $\nu$ is $-n_2\{\mathrm E_\nu d_\pi-\mathrm E_\pi d_\pi\}\ge-n_2\{\sup_{\mathbf x}d_\pi(\mathbf x)-\mathrm E_\pi d_\pi\}$. By convexity, $\Psi(\nu)\ge\Psi(\pi)$ plus this derivative for every $\nu$, which gives the second inequality in (14); the first holds because exact designs correspond to empirical measures. $\square$</p></details>
+
+<h2>Code and data availability</h2>
+<p>No experimental response data were generated or analysed. The <a href="https://github.com/lunganlungpg/stage-aware-dsd-followup">repository</a> contains the coordinates of every selected design, a Python package (<code>python/stageaware</code>) and an R package (<code>R/stageaware</code>) implementing all criteria, diagnostics, the rank-two coordinate exchange and the lower bounds, with tests that reproduce Tables 1–2, Section 5.4 and Section 5.5 from the stored designs.</p>
+<pre># Python
+pip install "git+https://github.com/lunganlungpg/stage-aware-dsd-followup#subdirectory=python"
+python -c "from stageaware import *; P=FollowUpProblem(dsd(6)[:, :3]); print(coordinate_exchange(P, 4, 'psi', n_starts=10).value)"
+
+# R
+remotes::install_github("lunganlungpg/stage-aware-dsd-followup", subdir = "R/stageaware")
+library(stageaware); P &lt;- followup_problem(dsd(6)[, 1:3]); coordinate_exchange(P, 4, "psi", n_starts = 10)$value</pre>
+
+<h2 id="cite">How to cite</h2>
+<pre>@misc{lunganlung2026stageaware,
+  title  = {Stage-aware follow-up designs for definitive screening experiments:
+            exact criteria, rank completion and pooled-criterion bias},
+  author = {Lunganlung P G and Verma, Prabhakar},
+  year   = {2026},
+  note   = {Preprint},
+  url    = {https://github.com/lunganlungpg/stage-aware-dsd-followup}
+}</pre>
+
+<h2>References</h2>
+<div class="refs">
+<p>Atkinson, A.C., Donev, A.N., 1989. The construction of exact D-optimum experimental designs with application to blocking response surface designs. Biometrika 76, 515–526. <a href="https://doi.org/10.1093/biomet/76.3.515">doi:10.1093/biomet/76.3.515</a></p>
+<p>Atkinson, A.C., Donev, A.N., Tobias, R.D., 2007. Optimum Experimental Designs, with SAS. Oxford University Press, Oxford.</p>
+<p>Bhatia, R., 1997. Matrix Analysis. Springer, New York.</p>
+<p>Brent, R.P., 1973. Algorithms for Minimization without Derivatives. Prentice-Hall, Englewood Cliffs, NJ.</p>
+<p>Byrd, R.H., Lu, P., Nocedal, J., Zhu, C., 1995. A limited memory algorithm for bound constrained optimization. SIAM J. Sci. Comput. 16, 1190–1208. <a href="https://doi.org/10.1137/0916069">doi:10.1137/0916069</a></p>
+<p>Cook, R.D., Nachtsheim, C.J., 1989. Computer-aided blocking of factorial and response-surface designs. Technometrics 31, 339–346. <a href="https://doi.org/10.1080/00401706.1989.10488556">doi:10.1080/00401706.1989.10488556</a></p>
+<p>Fidaleo, M., Ennouri, R., Lavecchia, R., Zuorro, A., Elaoud, S.C., Petrucci, E., 2026. Application of a definitive screening design and optimal augmentation to characterize an electro-Fenton process combined with anodic oxidation on BDD electrodes. Water Environ. Res. 98, e70295. <a href="https://doi.org/10.1002/wer.70295">doi:10.1002/wer.70295</a></p>
+<p>Gilmour, S.G., Trinca, L.A., 2012. Optimum design of experiments for statistical inference. J. R. Stat. Soc. Ser. C Appl. Stat. 61, 345–401. <a href="https://doi.org/10.1111/j.1467-9876.2011.01000.x">doi:10.1111/j.1467-9876.2011.01000.x</a></p>
+<p>Goos, P., Donev, A.N., 2006. Blocking response surface designs. Comput. Statist. Data Anal. 51, 1075–1088. <a href="https://doi.org/10.1016/j.csda.2005.11.003">doi:10.1016/j.csda.2005.11.003</a></p>
+<p>Goos, P., Jones, B., 2011. Optimal Design of Experiments: A Case Study Approach. Wiley, Chichester. <a href="https://doi.org/10.1002/9781119974017">doi:10.1002/9781119974017</a></p>
+<p>Goos, P., Vandebroek, M., 2001. D-optimal response surface designs in the presence of random block effects. Comput. Statist. Data Anal. 37, 433–453. <a href="https://doi.org/10.1016/S0167-9473(01)00010-X">doi:10.1016/S0167-9473(01)00010-X</a></p>
+<p>Harris, C.R., Millman, K.J., van der Walt, S.J., et al., 2020. Array programming with NumPy. Nature 585, 357–362. <a href="https://doi.org/10.1038/s41586-020-2649-2">doi:10.1038/s41586-020-2649-2</a></p>
+<p>Jones, B., Nachtsheim, C.J., 2011. A class of three-level designs for definitive screening in the presence of second-order effects. J. Qual. Technol. 43, 1–15. <a href="https://doi.org/10.1080/00224065.2011.11917841">doi:10.1080/00224065.2011.11917841</a></p>
+<p>Jones, B., Nachtsheim, C.J., 2016. Blocking schemes for definitive screening designs. Technometrics 58, 74–83. <a href="https://doi.org/10.1080/00401706.2015.1013777">doi:10.1080/00401706.2015.1013777</a></p>
+<p>Jones, B., Nachtsheim, C.J., 2017. Effective design-based model selection for definitive screening designs. Technometrics 59, 319–329. <a href="https://doi.org/10.1080/00401706.2016.1234979">doi:10.1080/00401706.2016.1234979</a></p>
+<p>Liu, M., Mee, R.W., Zhou, Y., 2023. Augmenting definitive screening designs: going outside the box. J. Qual. Technol. 55, 289–301. <a href="https://doi.org/10.1080/00224065.2022.2128946">doi:10.1080/00224065.2022.2128946</a></p>
+<p>Meyer, R.K., Nachtsheim, C.J., 1995. The coordinate-exchange algorithm for constructing exact optimal experimental designs. Technometrics 37, 60–69. <a href="https://doi.org/10.1080/00401706.1995.10485889">doi:10.1080/00401706.1995.10485889</a></p>
+<p>Nachtsheim, C.J., Jones, B., 2018. Design augmentation for response optimization and model estimation. Qual. Eng. 30, 38–51. <a href="https://doi.org/10.1080/08982112.2017.1382298">doi:10.1080/08982112.2017.1382298</a></p>
+<p>Núñez Ares, J., Goos, P., 2023. Blocking OMARS designs and definitive screening designs. J. Qual. Technol. 55, 489–509. <a href="https://doi.org/10.1080/00224065.2023.2196035">doi:10.1080/00224065.2023.2196035</a></p>
+<p>Pukelsheim, F., 1993. Optimal Design of Experiments. Wiley, New York.</p>
+<p>Virtanen, P., Gommers, R., Oliphant, T.E., et al., 2020. SciPy 1.0: fundamental algorithms for scientific computing in Python. Nat. Methods 17, 261–272. <a href="https://doi.org/10.1038/s41592-019-0686-2">doi:10.1038/s41592-019-0686-2</a></p>
+<p>Xiao, L., Lin, D.K.J., Bai, F., 2012. Constructing definitive screening designs using conference matrices. J. Qual. Technol. 44, 2–8. <a href="https://doi.org/10.1080/00224065.2012.11917877">doi:10.1080/00224065.2012.11917877</a></p>
+</div>
+<footer>Preprint. This version has not been peer reviewed. Code released under the MIT licence; text © the authors.</footer>
+</main>
+
+<script>
+"use strict";
+/* ===================== stored designs (data/selected_designs) ===================== */
+const DESIGNS = {
+ "6,3,4": {
+  psi_aware: [[1,1,1],[-1.1611836546493394e-05,-4.193497750735122e-05,-4.0623142144204577e-05],[-7.976800617779536e-07,4.341523182940496e-06,4.1628216347981216e-06],[-1,-1,-1]],
+  psi_exact: [[1,1,1],[0,0,0],[0,0,0],[-1,-1,-1]],
+  Iu_naive: [[1,-0.21211134187734992,-0.21653362820960345],[-0.03481793562197378,-0.05072367677275272,-0.034846792316038926],[-0.21663412236892285,-0.21205564734763094,1],[-0.19334926181100015,0.8736552339007628,-0.1934272209426391]],
+  C_aware: [[-0.004774776505365083,1,-1],[-1,-0.004774795189266475,1],[-1,-1,-1],[1,-1,-0.004774795525817638]],
+  Cu_pooled: [[1,-1,-0.04645688830702907],[-1,-1,-1],[1,-0.024136674853420644,-1],[-0.012113005818102264,1,-1]]},
+ "8,4,6": {
+  psi_aware: [[0.11865684249069633,-1,1,0.18823404247972103],[-1,-1,-0.1728176094765659,-0.45725744128632767],[-0.42538953658823825,0.13634659937039845,1,-1],[-0.0945448604948032,0.07915963712105759,-0.02930919678524357,0.021351390130320565],[-1,1,1,1],[-1,1,-1,-1]],
+  Iu_naive: [[1,-0.10886403164436542,-0.2012148105527833,-1],[-1,-1,-0.2013641225189169,-0.10903203377011943],[-3.4354819633303316e-05,0.007470725655784272,0.13607449312833458,0.007628132293688635],[5.914425572684144e-05,0.00766234934774734,0.13596943861973593,0.007732228842450794],[-0.1131543605681674,1,-1,-0.22927068810860257],[0.11321284748515827,-0.22940506245765,-1,1]],
+  C_aware: [[1,-0.21723151449425,-1,-1],[-0.2395380066674369,0.4926524212883231,1,-1],[1,1,0.632579065164603,0.10804210518859218],[-1,-1,-0.24993857220028948,-1],[-1,0.33005231059969314,0.09288013328973752,1],[-0.36297889168482167,1,-1,-0.3171257648397432]],
+  Cu_pooled: [[1,-0.17255795877058253,-0.17732528237848344,-1],[0.17732549746406867,-0.17255820494628527,-1,1],[0.39974776517915517,-1,1,0.14680370888816624],[1,1,0.16709553724147613,0.471089853867399],[-1,-1,-0.3997471548644915,-0.1468029995097851],[-0.16709512250233835,1,-1,-0.47108757340589547]]},
+ "10,4,4": {
+  psi_aware: [[1,-0.7617661505242077,-0.6820931785814971,-0.6804311937634424],[0.5396045175366762,-1,0.3438772012362288,1],[-0.5153000201771157,-1,1,-0.3363381530845268],[0.6052589731826795,0.2718995703875564,1,-1]],
+  Iu_naive: [[0.0016032362878446145,-1,-0.012465606003363843,1],[-0.006288474054370172,-0.010842567520423483,-1,1],[0.05062999227864896,1,-1,0.023961007689049647],[-1,0.24925787559510368,0.2614449129105975,0.23664315009242493]],
+  C_aware: [[0.7614422935344441,0.6823155298400656,0.680599244356257,-1],[-0.27216030225821713,-1,1,-0.6049616291616632],[1,-1,0.3363474474592246,0.5151985908262834],[1,-0.3438912907551319,-1,-0.5399942358231892]],
+  Cu_pooled: [[1,1,1,-1],[-1,0.2670162536391701,0.2670162402966011,1],[0.2670162099357006,-1,0.26701622023012656,1],[0.26701621925921426,0.26701623365496036,-1,1]]}
+};
+const PRESET_LABEL = {psi_aware:"Ψ-aware (Table 1)", psi_exact:"Ψ-aware, exact centre runs (Table 3)", Iu_naive:"I_u-naive selected (Table 1)", C_aware:"C-aware (Table 2)", Cu_pooled:"C_u-pooled selected (Table 2)", random:"Random runs", thm1:"Theorem 1 construction (q+1 runs)"};
+const TRAJ = [
+ {m:6,n2:0,df:3,psi:0.6237435897435898},{m:6,n2:2,df:4,psi:0.4176561150935527},{m:6,n2:3,df:5,psi:0.37874821937654063},{m:6,n2:4,df:6,psi:0.3566478990525325},{m:6,n2:5,df:7,psi:0.33435708241109513},{m:6,n2:6,df:8,psi:0.31041570670110574},
+ {m:8,n2:0,df:2,psi:Infinity},{m:8,n2:2,df:3,psi:Infinity},{m:8,n2:3,df:4,psi:0.7050353138341607},{m:8,n2:4,df:5,psi:0.5785351831716332},{m:8,n2:5,df:6,psi:0.5083372208786456},{m:8,n2:6,df:7,psi:0.45384002028636194}];
+
+/* ===================== linear algebra ===================== */
+const zeros = (r,c)=>Array.from({length:r},()=>new Array(c).fill(0));
+function addTo(A,B){for(let i=0;i<A.length;i++)for(let j=0;j<A.length;j++)A[i][j]+=B[i][j];return A}
+function copyM(A){return A.map(r=>r.slice())}
+function trAB(A,B){let s=0;for(let i=0;i<A.length;i++)for(let j=0;j<A.length;j++)s+=A[i][j]*B[j][i];return s}
+function matVec(A,v){return A.map(r=>r.reduce((s,a,j)=>s+a*v[j],0))}
+function dot(a,b){let s=0;for(let i=0;i<a.length;i++)s+=a[i]*b[i];return s}
+function spdInv(A){ // Cholesky inverse; null if not numerically positive definite
+  const n=A.length, L=zeros(n,n); let mx=0; for(let i=0;i<n;i++) mx=Math.max(mx,Math.abs(A[i][i]));
+  const tol=1e-10*Math.max(1,mx);
+  for(let j=0;j<n;j++){let s=A[j][j];for(let k=0;k<j;k++)s-=L[j][k]*L[j][k];if(!(s>tol))return null;L[j][j]=Math.sqrt(s);
+    for(let i=j+1;i<n;i++){let t=A[i][j];for(let k=0;k<j;k++)t-=L[i][k]*L[j][k];L[i][j]=t/L[j][j];}}
+  const Li=zeros(n,n); // inverse of L
+  for(let i=0;i<n;i++){Li[i][i]=1/L[i][i];for(let j=0;j<i;j++){let s=0;for(let k=j;k<i;k++)s-=L[i][k]*Li[k][j];Li[i][j]=s/L[i][i];}}
+  const R=zeros(n,n); for(let i=0;i<n;i++)for(let j=0;j<=i;j++){let s=0;for(let k=i;k<n;k++)s+=Li[k][i]*Li[k][j];R[i][j]=s;R[j][i]=s;}
+  return R;
+}
+function rankOf(A0){ // Gaussian elimination with partial pivoting
+  const A=copyM(A0), r=A.length, c=A[0].length; let mx=0; for(const row of A)for(const v of row)mx=Math.max(mx,Math.abs(v));
+  const tol=1e-9*Math.max(1,mx); let rank=0;
+  for(let col=0;col<c&&rank<r;col++){let p=rank;for(let i=rank+1;i<r;i++)if(Math.abs(A[i][col])>Math.abs(A[p][col]))p=i;
+    if(Math.abs(A[p][col])<=tol)continue;[A[p],A[rank]]=[A[rank],A[p]];
+    for(let i=rank+1;i<r;i++){const f=A[i][col]/A[rank][col];if(f)for(let j=col;j<c;j++)A[i][j]-=f*A[rank][j];}rank++;}
+  return rank;
+}
+function eigMin(A0){ // cyclic Jacobi, smallest eigenvalue of a symmetric matrix
+  const A=copyM(A0), n=A.length;
+  for(let sweep=0;sweep<60;sweep++){let off=0;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)off+=A[i][j]*A[i][j];if(off<1e-22)break;
+    for(let p=0;p<n;p++)for(let q=p+1;q<n;q++){if(Math.abs(A[p][q])<1e-300)continue;
+      const th=(A[q][q]-A[p][p])/(2*A[p][q]),t=Math.sign(th||1)/(Math.abs(th)+Math.sqrt(th*th+1)),cs=1/Math.sqrt(t*t+1),sn=t*cs;
+      for(let k=0;k<n;k++){const a=A[k][p],b=A[k][q];A[k][p]=cs*a-sn*b;A[k][q]=sn*a+cs*b;}
+      for(let k=0;k<n;k++){const a=A[p][k],b=A[q][k];A[p][k]=cs*a-sn*b;A[q][k]=sn*a+cs*b;}}}
+  let m=Infinity;for(let i=0;i<n;i++)m=Math.min(m,A[i][i]);return m;
+}
+
+/* ===================== designs and model ===================== */
+function paley(q){
+  const sub=(a,b)=>q!==9?((a-b)%q+q)%q:(((a%3-b%3)%3+3)%3)+3*((((a/3|0)-(b/3|0))%3+3)%3);
+  const mul=(a,b)=>{if(q!==9)return (a*b)%q;const aa=a%3,ab=a/3|0,ba=b%3,bb=b/3|0;return ((aa*ba+2*ab*bb)%3)+3*((aa*bb+ab*ba)%3)};
+  const pw=(a,e)=>{let v=1;for(let i=0;i<e;i++)v=mul(v,a);return v};
+  const chi=v=>v===0?0:(pw(v,(q-1)/2)===1?1:-1);
+  const C=zeros(q+1,q+1);for(let i=0;i<=q;i++)for(let j=0;j<=q;j++)C[i][j]=1;C[0][0]=0;
+  for(let a=0;a<q;a++)for(let b=0;b<q;b++)C[a+1][b+1]=chi(sub(a,b));
+  if(q%4===3)for(let i=1;i<=q;i++)C[i][0]=-1;
+  return C;
+}
+const DSD_CACHE={};
+function dsd(m){ if(DSD_CACHE[m])return DSD_CACHE[m];
+  const mm=m%2?m+1:m, C=paley(mm-1);
+  const D=[...C.map(r=>r.slice(0,m)),...C.map(r=>r.slice(0,m).map(v=>-v)),new Array(m).fill(0)];
+  return DSD_CACHE[m]=D.map(r=>r.map(v=>v===0?0:v)); }
+function zrow(x){const k=x.length,r=x.slice();for(let i=0;i<k;i++)r.push(x[i]*x[i]);for(let i=0;i<k;i++)for(let j=i+1;j<k;j++)r.push(x[i]*x[j]);return r}
+function frow(x){return [1,...zrow(x)]}
+function exponents(k){const ex=[];for(let j=0;j<k;j++){const e=new Array(k).fill(0);e[j]=1;ex.push(e)}
+  for(let j=0;j<k;j++){const e=new Array(k).fill(0);e[j]=2;ex.push(e)}
+  for(let i=0;i<k;i++)for(let j=i+1;j<k;j++){const e=new Array(k).fill(0);e[i]=1;e[j]=1;ex.push(e)}return ex}
+function moments(k){const ex=[new Array(k).fill(0),...exponents(k)],P=ex.length,Om=zeros(P,P);
+  for(let a=0;a<P;a++)for(let b=0;b<P;b++){let v=1;for(let j=0;j<k;j++){const s=ex[a][j]+ex[b][j];if(s%2){v=0;break}v/=s+1}Om[a][b]=v}
+  const mu=Om[0].slice(1),t=P-1,V=zeros(t,t);for(let i=0;i<t;i++)for(let j=0;j<t;j++)V[i][j]=Om[i+1][j+1]-mu[i]*mu[j];
+  return {mu,V,Om};}
+function meanRows(Z){const t=Z[0].length,m=new Array(t).fill(0);for(const r of Z)for(let j=0;j<t;j++)m[j]+=r[j]/Z.length;return m}
+function scatter(Z){const t=Z[0].length,S=zeros(t,t);if(!Z.length)return S;const m=meanRows(Z);
+  for(const r of Z)for(let i=0;i<t;i++){const di=r[i]-m[i];for(let j=0;j<=i;j++)S[i][j]+=di*(r[j]-m[j])}
+  for(let i=0;i<t;i++)for(let j=0;j<i;j++)S[j][i]=S[i][j];return S}
+function crossprod(F){const p=F[0].length,M=zeros(p,p);for(const r of F)for(let i=0;i<p;i++)for(let j=0;j<=i;j++)M[i][j]+=r[i]*r[j];
+  for(let i=0;i<p;i++)for(let j=0;j<i;j++)M[j][i]=M[i][j];return M}
+
+function makeProblem(m,active){
+  const D=dsd(m), X1=D.map(r=>active.map(a=>r[a-1])), k=active.length;
+  const Z1=X1.map(zrow), F1=X1.map(frow), mom=moments(k), zbar1=meanRows(Z1), d=mom.mu.map((v,i)=>v-zbar1[i]);
+  const t=Z1[0].length, Q=copyM(mom.V); for(let i=0;i<t;i++)for(let j=0;j<t;j++)Q[i][j]+=d[i]*d[j];
+  const r1=rankOf(F1), p=t+1;
+  return {m,active,k,X1,Z1,F1,n1:X1.length,t,p,zbar1,S1:scatter(Z1),Q,V:mom.V,Om:mom.Om,mu:mom.mu,r1,q:p-r1,F1tF1:crossprod(F1)};
+}
+function Swithin(P,X2){const S=copyM(P.S1);if(X2.length)addTo(S,scatter(X2.map(zrow)));return S}
+function psiOf(P,X2){const Si=spdInv(Swithin(P,X2));return Si?trAB(Si,P.Q):Infinity}
+function cOf(P,X2){const Si=spdInv(Swithin(P,X2));return Si?2*trAB(Si,P.V):Infinity}
+function iuOf(P,X2){const M=copyM(P.F1tF1);if(X2.length)addTo(M,crossprod(X2.map(frow)));const Mi=spdInv(M);return Mi?trAB(Mi,P.Om):Infinity}
+function evaluate(P,X2){
+  const n2=X2.length, Z2=X2.map(zrow), S=Swithin(P,X2), Si=spdInv(S), out={n2};
+  out.psi=Si?trAB(Si,P.Q):Infinity; out.C=Si?2*trAB(Si,P.V):Infinity; out.phi=1/P.n1+out.psi;
+  const Mu=copyM(P.F1tF1); if(n2)addTo(Mu,crossprod(X2.map(frow))); const Mi=spdInv(Mu);
+  out.Iu=Mi?trAB(Mi,P.Om):Infinity;
+  if(n2&&Mi){const fb=meanRows(X2.map(frow));out.h=n2*dot(fb,matVec(Mi,fb))}else out.h=n2?NaN:0;
+  const Sp=spdInv(scatter([...P.Z1,...Z2])); out.Cu=Sp?2*trAB(Sp,P.V):Infinity;
+  if(n2){const D=meanRows(Z2).map((v,i)=>v-P.zbar1[i]);out.normD=Math.sqrt(dot(D,D));
+    if(Si){const SiD=matVec(Si,D),a=P.n1*n2/(P.n1+n2);out.lev=dot(D,SiD);out.gap=2*a*dot(SiD,matVec(P.V,SiD))/(1+a*out.lev)}else{out.lev=Infinity;out.gap=Infinity}}
+  const Ma=copyM(P.F1tF1); if(n2){const F2=X2.map(frow),fb=meanRows(F2);addTo(Ma,crossprod(F2.map(r=>r.map((v,i)=>v-fb[i]))))}
+  out.rank=rankOf(Ma); out.df=P.n1+n2-out.rank-(n2>0?1:0); out.minEig=eigMin(S);
+  return out;
+}
+
+/* ===================== coordinate exchange (browser) ===================== */
+function golden(f,a,b,it=28){const g=(Math.sqrt(5)-1)/2;let c=b-g*(b-a),d=a+g*(b-a),fc=f(c),fd=f(d);
+  for(let i=0;i<it;i++){if(fc<fd){b=d;d=c;fd=fc;c=b-g*(b-a);fc=f(c)}else{a=c;c=d;fc=fd;d=a+g*(b-a);fd=f(d)}}return fc<fd?[c,fc]:[d,fd]}
+async function exchange(P,n2,crit,starts,report){
+  const f=crit==="psi"?X=>psiOf(P,X):crit==="C"?X=>cOf(P,X):X=>iuOf(P,X);
+  const grid=Array.from({length:9},(_,i)=>-1+i/4); let best=null,bestV=Infinity; const all=[];
+  for(let s=0;s<starts;s++){
+    let X,v; for(let tries=0;tries<500;tries++){X=Array.from({length:n2},()=>Array.from({length:P.k},()=>2*Math.random()-1));v=f(X);if(isFinite(v))break}
+    for(let sweep=0;sweep<25;sweep++){const before=v;
+      for(let i=0;i<n2;i++)for(let j=0;j<P.k;j++){
+        const g=c=>{const old=X[i][j];X[i][j]=c;const r=f(X);X[i][j]=old;return r};
+        const gv=grid.map(g); let bv=v,bx=X[i][j];
+        grid.forEach((c,q)=>{if(gv[q]<bv){bv=gv[q];bx=c}});
+        const ord=[...Array(8).keys()].sort((a,b)=>Math.min(gv[a],gv[a+1])-Math.min(gv[b],gv[b+1])).slice(0,3);
+        for(const q of ord){const [x,fx]=golden(g,grid[q],grid[q+1]);if(fx<bv){bv=fx;bx=x}}
+        if(bv<v-1e-9){X[i][j]=bx;v=f(X)}}
+      if(before-v<1e-9)break}
+    all.push({X:X.map(r=>r.slice()),v});
+    if(v<bestV){bestV=v;best=X.map(r=>r.slice())}
+    report(s+1,bestV); await new Promise(r=>setTimeout(r,0));
+  }
+  return {X:best,v:bestV,all};
+}
+
+/* ===================== explorer UI ===================== */
+const $=id=>document.getElementById(id);
+const fmt=(v,d=4)=>v===Infinity?"∞ (singular)":Number.isNaN(v)||v===undefined?"—":v.toFixed(d);
+let P=null, X2=[], scenKey="6,3,4", axX=0, axY=1, busy=false;
+
+function setScenario(m,active,n2,key){
+  P=makeProblem(m,active); scenKey=key;
+  const ps=$("preset"); ps.innerHTML="";
+  const keys=DESIGNS[key]?Object.keys(DESIGNS[key]):[];
+  [...keys,"random","thm1"].forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=PRESET_LABEL[k];ps.appendChild(o)});
+  [ $("ax"),$("ay")].forEach((s,w)=>{s.innerHTML="";active.forEach((a,i)=>{const o=document.createElement("option");o.value=i;o.textContent=axisName(i);s.appendChild(o)});s.value=w});
+  axX=0;axY=Math.min(1,P.k-1);
+  X2=keys.length?DESIGNS[key][keys[0]].map(r=>r.slice()):randomDesign(n2);
+  if(!keys.length)ps.value="random";
+  render();
+}
+function axisName(i){ if(scenKey==="6,3,4")return ["x₁ sucrose","x₂ BAP","x₃ NAA"][i]; return "x"+(P?P.active[i]:i+1) }
+function randomDesign(n2){return Array.from({length:n2},()=>Array.from({length:P.k},()=>+(2*Math.random()-1).toFixed(3)))}
+function thm1Design(n2){ // any Stage 1 point + q random points (generic position), padded to n2
+  const n=Math.max(n2,P.q+1), X=[P.X1[0].slice()];
+  while(X.length<n)X.push(Array.from({length:P.k},()=>+(2*Math.random()-1).toFixed(3)));return X}
+function loadPreset(name){
+  const n2=X2.length||4;
+  if(name==="random")X2=randomDesign(n2); else if(name==="thm1")X2=thm1Design(P.q?P.q+1:n2);
+  else X2=DESIGNS[scenKey][name].map(r=>r.slice());
+  render();
+}
+
+function render(){ drawPlot(); drawMetrics(); drawCoords(); }
+
+function drawMetrics(){
+  const e=evaluate(P,X2), full=e.rank===P.p;
+  const cells=[
+    ["Ψ  excess integrated variance (5)",fmt(e.psi),true],
+    ["C  pairwise-contrast variance (6)",fmt(e.C),true],
+    ["Φ_I = 1/n₁ + Ψ",fmt(e.phi)],
+    ["I_u  unblocked criterion",fmt(e.Iu)],
+    ["h  stage confounding (7)",fmt(e.h,3)],
+    ["C_u  pooled contrast",fmt(e.Cu)],
+    ["C − C_u  pooled overstatement (10)",fmt(e.gap,3)],
+    ["Δ′S⁻¹Δ  directional leverage",fmt(e.lev,3)],
+    ["‖Δ‖  stage-mean displacement",fmt(e.normD,3)],
+    ["min eigenvalue of S",fmt(e.minEig,3)],
+    ["rank(M_a) / p",`${e.rank} / ${P.p}`],
+    ["residual df",String(e.df)],
+  ];
+  $("metrics").innerHTML=cells.map(([k,v,hi])=>`<div class="m${hi?" hi":""}"><div class="k">${k}</div><div class="v">${v}</div></div>`).join("");
+  const need=P.q?P.q+1:2;
+  let msg=`Projection: m = ${P.m}, active {${P.active.join(",")}}, n₁ = ${P.n1}, r₁ = ${P.r1}, q = ${P.q}. Theorem 1: at least ${P.q?P.q+1:"2 (n₂ = 1 adds nothing)"} follow-up runs. `;
+  msg+= full?`<span class="good">Full rank with n₂ = ${X2.length}.</span>`:`<span class="warn">Not estimable: rank(M_a) = ${e.rank} &lt; p = ${P.p}${X2.length<need?` — n₂ = ${X2.length} is below the Theorem 1 minimum of ${need}`:""}.</span>`;
+  if(scenKey==="6,3,4"&&isFinite(e.psi))msg+=` RMS prediction SE at σ̂ = 1.25: ${(1.25*Math.sqrt(e.phi)).toFixed(3)}.`;
+  $("verdict").innerHTML=msg;
+}
+
+function natural(i,v){const r=[[15,35],[0.25,1.75],[0.05,0.55]][i];return r[0]+(v+1)/2*(r[1]-r[0])}
+function drawCoords(){
+  const tb=$("coords"), nat=scenKey==="6,3,4";
+  let h=`<tr><th>run</th>${P.active.map((a,i)=>`<th>${axisName(i)}</th>`).join("")}${nat?"<th>sucrose g/L</th><th>BAP mg/L</th><th>NAA mg/L</th>":""}<th></th></tr>`;
+  X2.forEach((r,i)=>{h+=`<tr><td>${i+1}</td>${r.map((v,j)=>`<td><input type="number" min="-1" max="1" step="0.05" value="${+v.toFixed(3)}" data-i="${i}" data-j="${j}" aria-label="run ${i+1} ${axisName(j)}"></td>`).join("")}${nat?r.map((v,j)=>`<td>${natural(j,v).toFixed(2)}</td>`).join(""):""}<td><button data-del="${i}" aria-label="remove run ${i+1}">✕</button></td></tr>`});
+  h+=`<tr><td colspan="${P.k+(nat?5:2)}"><button id="addrun">+ add run</button></td></tr>`;
+  tb.innerHTML=h;
+  tb.querySelectorAll("input").forEach(inp=>inp.addEventListener("change",e=>{const i=+inp.dataset.i,j=+inp.dataset.j;let v=parseFloat(inp.value);if(!isFinite(v))v=0;X2[i][j]=Math.max(-1,Math.min(1,v));drawPlot();drawMetrics();drawCoords()}));
+  tb.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{if(X2.length>1){X2.splice(+b.dataset.del,1);render()}}));
+  $("addrun").addEventListener("click",()=>{X2.push(new Array(P.k).fill(0));render()});
+}
+
+const PAD=30, W=340, SC=(W-2*PAD)/2;
+const sx=v=>PAD+(v+1)*SC, sy=v=>W-PAD-(v+1)*SC;
+function drawPlot(){
+  const svg=$("plot"), css=getComputedStyle(document.documentElement), heat=css.getPropertyValue("--heat").trim();
+  let g="";
+  // heat map of prediction variance on the slice
+  const Si=spdInv(Swithin(P,X2)), N=28;
+  if(Si){const vals=[];let lo=Infinity,hi=-Infinity;
+    for(let a=0;a<N;a++)for(let b=0;b<N;b++){const x=new Array(P.k).fill(0);x[axX]=-1+(a+.5)*2/N;x[axY]=-1+(b+.5)*2/N;
+      const d=zrow(x).map((v,i)=>v-P.zbar1[i]);const v=1/P.n1+dot(d,matVec(Si,d));vals.push([a,b,v]);lo=Math.min(lo,v);hi=Math.max(hi,v)}
+    const cw=2*SC/N;for(const [a,b,v] of vals){const o=hi>lo?0.05+0.5*(v-lo)/(hi-lo):0.1;g+=`<rect x="${PAD+a*cw}" y="${W-PAD-(b+1)*cw}" width="${cw+.4}" height="${cw+.4}" fill="rgba(${heat},${o.toFixed(3)})"/>`}
+    g+=`<text x="${W-PAD}" y="${PAD-10}" text-anchor="end" font-size="10" fill="currentColor" opacity=".7">Var range ${lo.toFixed(2)}–${hi.toFixed(2)} σ²</text>`;
+  }
+  g+=`<rect x="${PAD}" y="${PAD}" width="${2*SC}" height="${2*SC}" fill="none" stroke="currentColor" stroke-opacity=".35"/>`;
+  for(const t of [-1,0,1]){g+=`<text x="${sx(t)}" y="${W-PAD+14}" text-anchor="middle" font-size="10" fill="currentColor">${t}</text><text x="${PAD-6}" y="${sy(t)+3}" text-anchor="end" font-size="10" fill="currentColor">${t}</text>`}
+  g+=`<text x="${W/2}" y="${W-4}" text-anchor="middle" font-size="11" fill="currentColor">${axisName(axX)}</text><text transform="translate(10 ${W/2}) rotate(-90)" text-anchor="middle" font-size="11" fill="currentColor">${axisName(axY)}</text>`;
+  const cnt={};for(const r of P.X1){const key=r[axX]+","+r[axY];cnt[key]=(cnt[key]||0)+1}
+  for(const [key,c] of Object.entries(cnt)){const [a,b]=key.split(",").map(Number);g+=`<circle cx="${sx(a)}" cy="${sy(b)}" r="6" fill="var(--paper)" stroke="var(--s1)" stroke-width="1.5"/>`;if(c>1)g+=`<text x="${sx(a)+8}" y="${sy(b)-6}" font-size="9" fill="var(--s1)">${c}</text>`}
+  X2.forEach((r,i)=>{g+=`<g class="pt" data-i="${i}" style="cursor:grab"><circle cx="${sx(r[axX])}" cy="${sy(r[axY])}" r="9" fill="var(--ink)"/><text x="${sx(r[axX])}" y="${sy(r[axY])+3.5}" text-anchor="middle" font-size="10" font-weight="700" fill="var(--paper)" pointer-events="none">${i+1}</text></g>`});
+  svg.innerHTML=g;
+  svg.querySelectorAll(".pt").forEach(el=>el.addEventListener("pointerdown",startDrag));
+}
+function startDrag(ev){
+  const i=+ev.currentTarget.dataset.i, svg=$("plot"); ev.preventDefault();
+  const move=e=>{const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const p=pt.matrixTransform(svg.getScreenCTM().inverse());
+    X2[i][axX]=Math.max(-1,Math.min(1,(p.x-PAD)/SC-1));X2[i][axY]=Math.max(-1,Math.min(1,(W-PAD-p.y)/SC-1));drawPlot();drawMetrics()};
+  const up=()=>{window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",up);drawCoords()};
+  window.addEventListener("pointermove",move);window.addEventListener("pointerup",up);
+}
+
+async function runOpt(crit){
+  if(busy)return; const n2=X2.length; if(n2<2){$("status").textContent="Add at least two runs first.";return}
+  busy=true; document.querySelectorAll("#explorer button").forEach(b=>b.disabled=true);
+  const starts=Math.max(1,Math.min(200,+$("nstart").value||12)), name={psi:"Ψ",C:"C",Iu:"I_u"}[crit];
+  const res=await exchange(P,n2,crit,starts,(s,v)=>{$("status").textContent=`Coordinate exchange on ${name}: start ${s}/${starts}, best ${name} = ${v.toFixed(4)}`});
+  X2=res.X.map(r=>r.map(v=>Math.abs(v)<5e-4?0:v));
+  const e=evaluate(P,X2);
+  let msg=`Done: ${starts} starts, selected by ${name}. Under the stage-adjusted analysis this design has Ψ = ${fmt(e.psi)} and C = ${fmt(e.C)}.`;
+  if(crit==="Iu"){const poolBest=Math.min(...res.all.map(a=>psiOf(P,a.X)));msg+=` Re-ranking the same ${starts} naive terminal designs by Ψ would have chosen Ψ = ${poolBest.toFixed(4)} (same-pool best).`}
+  $("status").textContent=msg; busy=false; document.querySelectorAll("#explorer button").forEach(b=>b.disabled=false); render();
+}
+
+function initExplorer(){
+  const cm=$("cm"); for(let m=5;m<=14;m++){const o=document.createElement("option");o.value=m;o.textContent=m;cm.appendChild(o)} cm.value=6;
+  $("scen").addEventListener("change",()=>{const v=$("scen").value;$("customBox").hidden=v!=="custom";if(v==="custom")return applyCustom();
+    const [m,k,n2]=v.split(",").map(Number);setScenario(m,[...Array(k).keys()].map(i=>i+1),n2,v)});
+  $("capply").addEventListener("click",applyCustom);
+  $("preset").addEventListener("change",()=>loadPreset($("preset").value));
+  $("ax").addEventListener("change",()=>{axX=+$("ax").value;drawPlot()});
+  $("ay").addEventListener("change",()=>{axY=+$("ay").value;drawPlot()});
+  $("opt-psi").addEventListener("click",()=>runOpt("psi"));
+  $("opt-C").addEventListener("click",()=>runOpt("C"));
+  $("opt-Iu").addEventListener("click",()=>runOpt("Iu"));
+  $("copy").addEventListener("click",()=>{const csv=[P.active.map(a=>"x"+a).join(","),...X2.map(r=>r.map(v=>+v.toFixed(6)).join(","))].join("\n");
+    navigator.clipboard&&navigator.clipboard.writeText(csv).then(()=>{$("copied").textContent="copied"},()=>{$("copied").textContent="clipboard unavailable"})});
+  document.querySelectorAll("[data-load]").forEach(a=>a.addEventListener("click",()=>{const [key,name]=a.dataset.load.split("|");
+    if(scenKey!==key||$("scen").value==="custom"){$("scen").value=key;$("customBox").hidden=true;const [m,k]=key.split(",").map(Number);setScenario(m,[...Array(k).keys()].map(i=>i+1),4,key)}
+    $("preset").value=name;loadPreset(name)}));
+  setScenario(6,[1,2,3],4,"6,3,4");
+}
+function applyCustom(){
+  const m=+$("cm").value, act=$("cact").value.split(/[ ,]+/).map(Number).filter(a=>a>=1&&a<=m);
+  const uniq=[...new Set(act)].sort((a,b)=>a-b), n2=Math.max(2,Math.min(12,+$("cn2").value||4));
+  if(uniq.length<2||uniq.length>5){$("status").textContent="Choose 2–5 distinct active factors between 1 and m.";return}
+  scenKey="custom"; P=makeProblem(m,uniq); setScenario(m,uniq,n2,"custom-"+m+"-"+uniq.join("."));
+  $("status").textContent=`Custom projection: r₁ = ${P.r1}, q = ${P.q}; Theorem 1 needs n₂ ≥ ${P.q?P.q+1:2}.`;
+}
+
+/* ===================== verify tables in-browser ===================== */
+function checkTables(){
+  const sc=[[6,3,4],[8,4,6],[10,4,4]], t1=[[0.3566,0.5518],[0.4538,0.5326],[0.7049,0.7246]];
+  const t2=[[0.5161,0.5589,0.4501,0.4518],[0.5698,0.5832,0.5201,0.5282],[0.6984,0.7378,0.6984,1.1452]];
+  let ok1=true,ok2=true;
+  sc.forEach(([m,k,n2],s)=>{const Pp=makeProblem(m,[...Array(k).keys()].map(i=>i+1)),D=DESIGNS[m+","+k+","+n2];
+    ok1=ok1&&Math.abs(psiOf(Pp,D.psi_aware)-t1[s][0])<6e-5&&Math.abs(psiOf(Pp,D.Iu_naive)-t1[s][1])<6e-5;
+    const c=[cOf(Pp,D.psi_aware),cOf(Pp,D.Iu_naive),cOf(Pp,D.C_aware),cOf(Pp,D.Cu_pooled)];
+    ok2=ok2&&c.every((v,i)=>Math.abs(v-t2[s][i])<6e-5)});
+  $("t1check").innerHTML=ok1?'<span class="good">✓ Ψ values recomputed in your browser from the stored designs.</span>':'<span class="warn">Browser recomputation differs.</span>';
+  $("t2check").innerHTML=ok2?'<span class="good">✓ C values recomputed in your browser.</span>':'<span class="warn">Browser recomputation differs.</span>';
+}
+
+/* ===================== rank audit ===================== */
+function combos(n,k){const out=[],c=[];(function rec(s){if(c.length===k){out.push(c.slice());return}for(let i=s;i<=n;i++){c.push(i);rec(i+1);c.pop()}})(1);return out}
+function runAudit(){
+  let h='<table class="t"><tr><th>m</th><th>n₁</th><th>3-factor full rank</th><th>4-factor full rank</th><th>4-factor rank classes (q : count)</th><th>min n₂ (Thm 1)</th></tr>';
+  for(let m=5;m<=14;m++){const D=dsd(m);
+    const r3=combos(m,3).map(s=>rankOf(D.map(r=>frow(s.map(a=>r[a-1])))));
+    const r4=combos(m,4).map(s=>rankOf(D.map(r=>frow(s.map(a=>r[a-1])))));
+    const cls={};r4.forEach(r=>{const q=15-r;cls[q]=(cls[q]||0)+1});
+    const qs=Object.keys(cls).map(Number).sort((a,b)=>a-b);
+    h+=`<tr><td>${m}</td><td>${D.length}</td><td>${r3.filter(r=>r===10).length}/${r3.length}</td><td>${r4.filter(r=>r===15).length}/${r4.length}</td><td>${qs.map(q=>`${q} : ${cls[q]}`).join(", ")}</td><td>${qs.map(q=>q?q+1:0).join(" / ")}</td></tr>`}
+  $("auditOut").innerHTML=h+"</table>";
+}
+
+/* ===================== Fig. 1 ===================== */
+function drawFig1(){
+  const eps=+$("eps").value, dmin=Math.max(0,+$("dmin").value||0); $("epsv").textContent=eps.toFixed(4);
+  const svg=$("fig1svg"), L=58,R=150,T=14,B=40,Wd=560,Ht=300, x=n=>L+n*(Wd-L-R)/6, y=v=>T+(0.74-v)*(Ht-T-B)/(0.74-0.28);
+  let g="";
+  for(const v of [0.3,0.4,0.5,0.6,0.7]){g+=`<line x1="${L}" x2="${Wd-R}" y1="${y(v)}" y2="${y(v)}" stroke="currentColor" stroke-opacity=".1"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="currentColor">${v.toFixed(1)}</text>`}
+  for(let n=0;n<=6;n++)g+=`<text x="${x(n)}" y="${Ht-B+16}" text-anchor="middle" font-size="11" fill="currentColor">${n}</text>`;
+  g+=`<text x="${(L+Wd-R)/2}" y="${Ht-6}" text-anchor="middle" font-size="12" fill="currentColor">Number of follow-up runs, n₂</text>`;
+  g+=`<text transform="translate(14 ${(T+Ht-B)/2}) rotate(-90)" text-anchor="middle" font-size="12" fill="currentColor">Best-found Ψ</text>`;
+  g+=`<line x1="${L}" x2="${Wd-R}" y1="${y(eps)}" y2="${y(eps)}" stroke="var(--warn)" stroke-dasharray="4 3"/><text x="${Wd-R+6}" y="${y(eps)+4}" font-size="11" fill="var(--warn)">ε = ${eps.toFixed(4)}</text>`;
+  const decide=m=>TRAJ.filter(r=>r.m===m&&isFinite(r.psi)&&(r.n2!==1)).find(r=>r.df>=dmin&&r.psi<=eps);
+  const res={};
+  for(const [m,dash,lab] of [[6,"","m = 6, k = 3 (n₁ = 13)"],[8,"6 4","m = 8, k = 4 (n₁ = 17)"]]){
+    const pts=TRAJ.filter(r=>r.m===m&&isFinite(r.psi)); const ch=decide(m); res[m]=ch;
+    g+=`<polyline fill="none" stroke="var(--ink)" stroke-width="1.6" stroke-dasharray="${dash}" points="${pts.map(r=>x(r.n2)+","+y(r.psi)).join(" ")}"/>`;
+    pts.forEach(r=>{const sel=ch&&ch.n2===r.n2;g+=m===6?`<circle cx="${x(r.n2)}" cy="${y(r.psi)}" r="${sel?7:4.5}" fill="${sel?"var(--accent)":"var(--ink)"}"><title>n₂=${r.n2}: Ψ=${r.psi.toFixed(4)}, df=${r.df}</title></circle>`:`<rect x="${x(r.n2)-(sel?6:4.5)}" y="${y(r.psi)-(sel?6:4.5)}" width="${sel?12:9}" height="${sel?12:9}" fill="${sel?"var(--accent)":"var(--paper)"}" stroke="var(--ink)"><title>n₂=${r.n2}: Ψ=${r.psi.toFixed(4)}, df=${r.df}</title></rect>`});
+    const last=pts[pts.length-1]; g+=`<text x="${Wd-R+6}" y="${y(last.psi)+(m===6?14:-6)}" font-size="11" fill="currentColor">${lab}</text>`;
+  }
+  g+=`<text x="${x(1)}" y="${y(0.31)}" text-anchor="middle" font-size="10" fill="currentColor" opacity=".7">n₂ = 1 adds no</text><text x="${x(1)}" y="${y(0.31)+12}" text-anchor="middle" font-size="10" fill="currentColor" opacity=".7">adjusted information</text>`;
+  svg.innerHTML=g;
+  const say=(m,lab)=>res[m]?`${lab}: choose <b>n₂ = ${res[m].n2}</b> (Ψ = ${res[m].psi.toFixed(4)}, ${res[m].df} residual df).`:`${lab}: no n₂ ≤ 6 meets ε = ${eps.toFixed(4)} with d<sub>min</sub> = ${dmin}.`;
+  $("decision").innerHTML=say(6,"(6,3) projection")+"<br>"+say(8,"(8,4) projection")+` <span class="note">Ψ(0) = 0.6237 for (6,3); (8,4) is not estimable below n₂ = 3.</span>`;
+}
+
+/* ===================== boot ===================== */
+function themeInit(){const root=document.documentElement;let saved=null;try{saved=localStorage.getItem("theme")}catch(e){}
+  if(saved)root.setAttribute("data-theme",saved);
+  $("themeBtn").addEventListener("click",()=>{const dark=root.getAttribute("data-theme")?root.getAttribute("data-theme")==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
+    const next=dark?"light":"dark";root.setAttribute("data-theme",next);try{localStorage.setItem("theme",next)}catch(e){};render();drawFig1()})}
+document.addEventListener("DOMContentLoaded",()=>{
+  if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],throwOnError:false});
+  themeInit(); initExplorer(); checkTables();
+  $("runAudit").addEventListener("click",()=>{$("runAudit").disabled=true;$("auditOut").textContent="Computing…";setTimeout(()=>{runAudit();$("runAudit").disabled=false},20)});
+  $("eps").addEventListener("input",drawFig1); $("dmin").addEventListener("input",drawFig1);
+  document.querySelectorAll("[data-eps]").forEach(b=>b.addEventListener("click",()=>{$("eps").value=b.dataset.eps;drawFig1()}));
+  drawFig1();
+});
+</script>
+</body>
+</html>

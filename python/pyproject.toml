@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stageaware"
+version = "1.0.0"
+description = "Stage-aware follow-up designs for definitive screening experiments"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Lunganlung P G" }, { name = "Prabhakar Verma" }]
+dependencies = ["numpy>=1.21", "scipy>=1.7"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.setuptools]
+packages = ["stageaware"]
