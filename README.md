@@ -3,7 +3,7 @@
 **Exact criteria, rank completion and pooled-criterion bias**
 
 Lunganlung P. G. and Prabhakar Verma
-Division of Agricultural Statistics, ICAR-Indian Agricultural Research Institute, New Delhi
+Division of Agricultural Statistics, The Graduate School, ICAR-Indian Agricultural Research Institute, New Delhi-110012, India.
 
 [![Interactive preprint](https://img.shields.io/badge/read-interactive%20preprint-1f5fa8)](https://lunganlungpg.github.io/stage-aware-dsd-followup/)
 ![Status: preprint](https://img.shields.io/badge/status-preprint-lightgrey)

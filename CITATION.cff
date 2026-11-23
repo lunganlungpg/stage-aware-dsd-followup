@@ -3,10 +3,10 @@ message: "If you use this software or the results, please cite the paper."
 title: "Stage-aware follow-up designs for definitive screening experiments: exact criteria, rank completion and pooled-criterion bias"
 authors:
   - name: "Lunganlung P. G."
-    affiliation: "ICAR-Indian Agricultural Research Institute, New Delhi"
+    affiliation: "Division of Agricultural Statistics, The Graduate School, ICAR-Indian Agricultural Research Institute, New Delhi-110012, India"
   - family-names: "Verma"
     given-names: "Prabhakar"
-    affiliation: "ICAR-Indian Agricultural Research Institute, New Delhi"
+    affiliation: "Division of Agricultural Statistics, The Graduate School, ICAR-Indian Agricultural Research Institute, New Delhi-110012, India"
 version: "1.0.0"
 date-released: "2026-11-23"
 license: MIT
